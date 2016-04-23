@@ -4,7 +4,8 @@ import re
 import sys
 
 
-selected_string = sys.argv[1]
+with open(sys.argv[1], 'r') as myfile:
+    selected_string=myfile.read()
 
 add_edit = re.compile(r'(?s)\{\+\+(.*?)\+\+[ \t]*(\[(.*?)\])?[ \t]*\}')
 del_edit = re.compile(r'(?s)\{\-\-(.*?)\-\-[ \t]*(\[(.*?)\])?[ \t]*\}')
