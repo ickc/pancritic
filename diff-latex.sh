@@ -12,11 +12,11 @@ cp "$@" "$PATHNAMEWOEXT-diff-latex.$EXT"
 # replace
 ## sub
 sed -i '' s/'~~}'/'}'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
-sed -i '' s/'{~~'/'~~'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
-sed -i '' s/'~>'/'~~\\underline{'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
+sed -i '' s/'{~~'/'\\st{'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
+sed -i '' s/'~>'/'}\\underline{'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
 ## del
-sed -i '' s/'{--'/'~~'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
-sed -i '' s/'--}'/'~~'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
+sed -i '' s/'{--'/'\\st{'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
+sed -i '' s/'--}'/'}'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
 ## ins
 sed -i '' s/'{++'/'\\underline{'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
 sed -i '' s/'++}'/'}'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
@@ -24,5 +24,5 @@ sed -i '' s/'++}'/'}'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
 sed -i '' s/'{=='/'\\hl{'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
 sed -i '' s/'==}'/'}'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
 ## comment
-sed -i '' s/'{>>'/'<!-- '/g "$PATHNAMEWOEXT-diff-latex.$EXT"
-sed -i '' s/'<<}'/' -->'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
+sed -i '' s/'{>>'/'\\marginpar{'/g "$PATHNAMEWOEXT-diff-latex.$EXT"
+sed -i '' s/'<<}'/'}'/g "$PATHNAMEWOEXT-diff-latex.$EXT"

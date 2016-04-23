@@ -8,13 +8,18 @@
   <style type="text/css">code{white-space: pre;}</style>
 </head>
 <body>
+<p>Using CriticMarkup with pandoc---not a filter but a preprocessor.</p>
 <h1 id="definition">Definition</h1>
 <ul>
-<li>Deletions: This is <del>is</del> a test.</li>
+<li>Deletions: This is <del>is </del>a test.</li>
 <li>Additions: This <ins>is </ins>a test.</li>
 <li>Substitutions: This <del>isn't</del><ins>is</ins> a test.</li>
 <li>Highlighting: This is a <mark>test</mark>.</li>
-<li>Comments: This is a test<!-- What is it a test of? -->.</li>
+<li>Comments: This is a test
+<aside>
+What is a test for?
+</aside>
+.</li>
 </ul>
 <h1 id="mapping">Mapping</h1>
 <table>
@@ -32,9 +37,9 @@
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>~~[text]~~</code></td>
-<td><code>~~[text]~~</code></td>
-<td><code>~~[text]~~</code></td>
+<td><code>&lt;del&gt;[text]&lt;/del&gt;</code></td>
+<td><code>&lt;del&gt;[text]&lt;/del&gt;</code></td>
+<td><code>\sout{[text]}</code></td>
 </tr>
 <tr class="even">
 <td><code>&lt;ins&gt;[text]&lt;/ins&gt;</code></td>
@@ -42,9 +47,9 @@
 <td><code>\underline{[text]}</code></td>
 </tr>
 <tr class="odd">
-<td><code>~~[text1]~~&lt;ins&gt;[text2]&lt;/ins&gt;</code></td>
-<td><code>~~[text1]~~&lt;ins&gt;[text2]&lt;/ins&gt;</code></td>
-<td><code>~~[text1]~~\underline{[text2]}</code></td>
+<td><code>&lt;del&gt;[text1]&lt;/del&gt;&lt;ins&gt;[text2]&lt;/ins&gt;</code></td>
+<td><code>&lt;del&gt;[text1]&lt;/del&gt;&lt;ins&gt;[text2]&lt;/ins&gt;</code></td>
+<td><code>\sout{[text1]}\underline{[text2]}</code></td>
 </tr>
 <tr class="even">
 <td><code>&lt;mark&gt;[text]&lt;/mark&gt;</code></td>
@@ -52,9 +57,9 @@
 <td><code>\hl{[text]}</code></td>
 </tr>
 <tr class="odd">
-<td><code>&lt;!-- [text] --&gt;</code></td>
-<td><code>&lt;!-- [text] --&gt;</code></td>
-<td><code>&lt;!-- [text] --&gt;</code></td>
+<td><code>&lt;aside&gt;[text]&lt;/aside&gt;</code></td>
+<td><code>&lt;aside&gt;[text]&lt;/aside&gt;</code></td>
+<td><code>\marginpar{[text]}</code></td>
 </tr>
 </tbody>
 </table>

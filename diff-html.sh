@@ -12,11 +12,11 @@ cp "$@" "$PATHNAMEWOEXT-diff-html.$EXT"
 # replace
 ## sub
 sed -i '' s/'~~}'/'<\/ins>'/g "$PATHNAMEWOEXT-diff-html.$EXT"
-sed -i '' s/'{~~'/'~~'/g "$PATHNAMEWOEXT-diff-html.$EXT"
-sed -i '' s/'~>'/'~~<ins>'/g "$PATHNAMEWOEXT-diff-html.$EXT"
+sed -i '' s/'{~~'/'<del>'/g "$PATHNAMEWOEXT-diff-html.$EXT"
+sed -i '' s/'~>'/'<\/del><ins>'/g "$PATHNAMEWOEXT-diff-html.$EXT"
 ## del
-sed -i '' s/'{--'/'~~'/g "$PATHNAMEWOEXT-diff-html.$EXT"
-sed -i '' s/'--}'/'~~'/g "$PATHNAMEWOEXT-diff-html.$EXT"
+sed -i '' s/'{--'/'<del>'/g "$PATHNAMEWOEXT-diff-html.$EXT"
+sed -i '' s/'--}'/'<\/del>'/g "$PATHNAMEWOEXT-diff-html.$EXT"
 ## ins
 sed -i '' s/'{++'/'<ins>'/g "$PATHNAMEWOEXT-diff-html.$EXT"
 sed -i '' s/'++}'/'<\/ins>'/g "$PATHNAMEWOEXT-diff-html.$EXT"
@@ -24,5 +24,5 @@ sed -i '' s/'++}'/'<\/ins>'/g "$PATHNAMEWOEXT-diff-html.$EXT"
 sed -i '' s/'{=='/'<mark>'/g "$PATHNAMEWOEXT-diff-html.$EXT"
 sed -i '' s/'==}'/'<\/mark>'/g "$PATHNAMEWOEXT-diff-html.$EXT"
 ## comment
-sed -i '' s/'{>>'/'<!-- '/g "$PATHNAMEWOEXT-diff-html.$EXT"
-sed -i '' s/'<<}'/' -->'/g "$PATHNAMEWOEXT-diff-html.$EXT"
+sed -i '' s/'{>>'/'<aside>'/g "$PATHNAMEWOEXT-diff-html.$EXT"
+sed -i '' s/'<<}'/'<\/aside>'/g "$PATHNAMEWOEXT-diff-html.$EXT"
