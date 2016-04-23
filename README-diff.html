@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Kolen Cheung" />
+  <title>Using CriticMarkup with pandoc</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Using CriticMarkup with pandoc</h1>
+<h2 class="author">Kolen Cheung</h2>
+</div>
+<p>Using CriticMarkup with pandoc---not a filter but a preprocessor.</p>
+<h1 id="definition-of-criticmarkup">Definition of CriticMarkup</h1>
+<ul>
+<li>Deletions: This is <del>is </del>a test.</li>
+<li>Additions: This <ins>is </ins>a test.</li>
+<li>Substitutions: This <del>isn't</del><ins>is</ins> a test.</li>
+<li>Highlighting: This is a <mark>test</mark>.</li>
+<li>Comments: This is a test
+<aside>
+What is a test for?
+</aside>
+.</li>
+</ul>
+<h1 id="the-scripts">The Scripts</h1>
+<p>These scripts are supposed to be in the same folder:</p>
+<ul>
+<li><code>criticmarkup-accept.py</code></li>
+<li><code>criticmarkup-reject.py</code></li>
+<li><code>pandoc-criticmarkup.sh</code></li>
+</ul>
+<p>The <code>criticmarkup-accept.py</code> and <code>criticmarkup-reject.py</code> are extracted from the OS X System Services from <a href="http://criticmarkup.com/services.php">CriticMarkup Toolkit</a>.</p>
+<h1 id="usage">Usage</h1>
+<p><code>pandoc-criticmarkup.sh [options...] [file]</code></p>
+<p>Options:</p>
+<ul>
+<li>accept: <code>-a</code></li>
+<li>reject: <code>-r</code></li>
+<li>permanent: <code>-p</code></li>
+<li>show diff: <code>-d</code>
+<ul>
+<li><code>-d html</code>: targeting html output using RAW HTML</li>
+<li><code>-d latex</code>: targeting LaTeX output using RAW LaTeX</li>
+<li><code>-d pdf</code>: same as above</li>
+</ul></li>
+</ul>
+<p>If permanent is used, it will overwrite the original, if not, it will output to <code>stdout</code>. In most situation permanent should be used with <code>-a</code> or <code>-r</code> only, but it can be used with <code>-d</code> as well.</p>
+<p><code>-a</code>, <code>-r</code>, <code>-d</code> are supposed to use separately:</p>
+<ul>
+<li>If <code>-d</code> is used, the others are ignored,</li>
+<li>if <code>-r</code> is used, <code>-a</code> is ignored</li>
+</ul>
+<p>It can be used with the pandoc commands, like these (see build.sh):</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">./pandoc-criticmarkup.sh</span> -d html README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-diff.html
+<span class="kw">./pandoc-criticmarkup.sh</span> -d latex README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-diff.tex
+<span class="kw">./pandoc-criticmarkup.sh</span> -d pdf README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-diff.pdf
+
+<span class="kw">./pandoc-criticmarkup.sh</span> -a README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-accept.html
+<span class="kw">./pandoc-criticmarkup.sh</span> -a README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-accept.tex
+<span class="kw">./pandoc-criticmarkup.sh</span> -a README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-accept.pdf
+
+<span class="kw">./pandoc-criticmarkup.sh</span> -r README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-reject.html
+<span class="kw">./pandoc-criticmarkup.sh</span> -r README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-reject.tex
+<span class="kw">./pandoc-criticmarkup.sh</span> -r README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-reject.pdf  </code></pre></div>
+<h1 id="appendix-mapping-for-showing-differences">Appendix: Mapping for Showing Differences</h1>
+<table>
+<colgroup>
+<col width="30%" />
+<col width="35%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>critic markup</th>
+<th>HTML</th>
+<th>LaTeX</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>&lt;del&gt;[text]&lt;/del&gt;</code></td>
+<td><code>&lt;del&gt;[text]&lt;/del&gt;</code></td>
+<td><code>\st{[text]}</code></td>
+</tr>
+<tr class="even">
+<td><code>&lt;ins&gt;[text]&lt;/ins&gt;</code></td>
+<td><code>&lt;ins&gt;[text]&lt;/ins&gt;</code></td>
+<td><code>\underline{[text]}</code></td>
+</tr>
+<tr class="odd">
+<td><code>&lt;del&gt;[text1]&lt;/del&gt;&lt;ins&gt;[text2]&lt;/ins&gt;</code></td>
+<td><code>&lt;del&gt;[text1]&lt;/del&gt;&lt;ins&gt;[text2]&lt;/ins&gt;</code></td>
+<td><code>\st{[text1]}\underline{[text2]}</code></td>
+</tr>
+<tr class="even">
+<td><code>&lt;mark&gt;[text]&lt;/mark&gt;</code></td>
+<td><code>&lt;mark&gt;[text]&lt;/mark&gt;</code></td>
+<td><code>\hl{[text]}</code></td>
+</tr>
+<tr class="odd">
+<td><code>&lt;aside&gt;[text]&lt;/aside&gt;</code></td>
+<td><code>&lt;aside&gt;[text]&lt;/aside&gt;</code></td>
+<td><code>\marginpar{[text]}</code></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>
