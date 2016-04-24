@@ -62,7 +62,13 @@ It can be used with the pandoc commands, like these (see `build.sh` for more exa
 ./pandoc-criticmarkup.sh -rp README-reject.md
 ```
 
-# Appendix: Mapping for Showing Differences #
+# Appendix
+
+## CSS ##
+
+An optional CSS `pandoc-criticmarkup.css` make the deletions and additions more obvious in HTML output.
+
+## Mapping for Showing Differences ##
 
 | critic markup	| HTML	| LaTeX  	| 
 |  ------------------------------------------	| -------------------------------------------------	| ----------------------------------------------	|  
