@@ -22,6 +22,8 @@ These scripts are supposed to be in the same folder:
 
 The `criticmarkup-accept.py` and `criticmarkup-reject.py` are extracted from the OS X System Services from [CriticMarkup Toolkit](http://criticmarkup.com/services.php).
 
+Note that the latex output requires the LaTeX packages `color` and `soul`. As you can see from this markdown file, I have an YAML of `usepackage: [color,soul]`, that in my template will added `\usepackage{color,soul}`. See [ickc/pandoc-templates at latex-usepackage-hyperref](https://github.com/ickc/pandoc-templates/tree/latex-usepackage-hyperref).
+
 # Usage #
 
 `pandoc-criticmarkup.sh [options...] [file]`
