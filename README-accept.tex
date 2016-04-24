@@ -1,6 +1,6 @@
 \documentclass[]{article}
-\usepackage{lmodern}
-\usepackage{amssymb,amsmath,color,soul}
+\usepackage[]{lmodern,color,soul}
+\usepackage{amssymb,amsmath,}
 \usepackage{ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
@@ -131,6 +131,20 @@ The \texttt{criticmarkup-accept.py} and \texttt{criticmarkup-reject.py}
 are extracted from the OS X System Services from
 \href{http://criticmarkup.com/services.php}{CriticMarkup Toolkit}.
 
+\subsection{Note on LaTeX Output: Usepackage
+Required}\label{note-on-latex-output-usepackage-required}
+
+Note that the latex output requires the LaTeX packages \texttt{color}
+and \texttt{soul}. As you can see from this markdown file, I used a hack
+to guarantee your pandoc standard template also use them, like this:
+\texttt{fontfamily:\ lmodern,color,soul}.
+
+In my personal use, I have an YAML of
+\texttt{usepackage:\ {[}color,soul{]}} that in my template will added
+\texttt{\textbackslash{}usepackage\{color,soul\}}. See
+\href{https://github.com/ickc/pandoc-templates/tree/latex-usepackage-hyperref}{ickc/pandoc-templates
+at latex-usepackage-hyperref} for details.
+
 \section{Usage}\label{usage}
 
 \texttt{pandoc-criticmarkup.sh\ {[}options...{]}\ {[}file{]}}
@@ -174,21 +188,17 @@ with \texttt{-a} or \texttt{-r} only, but it can be used with
   if \texttt{-r} is used, \texttt{-a} is ignored
 \end{itemize}
 
-It can be used with the pandoc commands, like these (see build.sh):
+It can be used with the pandoc commands, like these (see
+\texttt{build.sh} for more examples):
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{./pandoc-criticmarkup.sh} \NormalTok{-d html README.md }\KeywordTok{|} \KeywordTok{pandoc} \NormalTok{-s -o README-diff.html}
-\KeywordTok{./pandoc-criticmarkup.sh} \NormalTok{-d latex README.md }\KeywordTok{|} \KeywordTok{pandoc} \NormalTok{-s -o README-diff.tex}
-\KeywordTok{./pandoc-criticmarkup.sh} \NormalTok{-d pdf README.md }\KeywordTok{|} \KeywordTok{pandoc} \NormalTok{-s -o README-diff.pdf}
-
-\KeywordTok{./pandoc-criticmarkup.sh} \NormalTok{-a README.md }\KeywordTok{|} \KeywordTok{pandoc} \NormalTok{-s -o README-accept.html}
-\KeywordTok{./pandoc-criticmarkup.sh} \NormalTok{-a README.md }\KeywordTok{|} \KeywordTok{pandoc} \NormalTok{-s -o README-accept.tex}
-\KeywordTok{./pandoc-criticmarkup.sh} \NormalTok{-a README.md }\KeywordTok{|} \KeywordTok{pandoc} \NormalTok{-s -o README-accept.pdf}
-
-\KeywordTok{./pandoc-criticmarkup.sh} \NormalTok{-r README.md }\KeywordTok{|} \KeywordTok{pandoc} \NormalTok{-s -o README-reject.html}
-\KeywordTok{./pandoc-criticmarkup.sh} \NormalTok{-r README.md }\KeywordTok{|} \KeywordTok{pandoc} \NormalTok{-s -o README-reject.tex}
-\KeywordTok{./pandoc-criticmarkup.sh} \NormalTok{-r README.md }\KeywordTok{|} \KeywordTok{pandoc} \NormalTok{-s -o README-reject.pdf  }
+\CommentTok{## Showing Difference and not overwriting}
+\KeywordTok{./pandoc-criticmarkup.sh} \NormalTok{-d html README.md }\KeywordTok{|} \KeywordTok{pandoc} \NormalTok{-s -o README.html}
+\KeywordTok{./pandoc-criticmarkup.sh} \NormalTok{-d pdf README.md }\KeywordTok{|} \KeywordTok{pandoc} \NormalTok{-s -o README.pdf}
+\CommentTok{## accept or reject while overwriting the source}
+\KeywordTok{./pandoc-criticmarkup.sh} \NormalTok{-ap README-accept.md}
+\KeywordTok{./pandoc-criticmarkup.sh} \NormalTok{-rp README-reject.md}
 \end{Highlighting}
 \end{Shaded}
 

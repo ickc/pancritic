@@ -67,6 +67,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>pandoc-criticmarkup.sh</code></li>
 </ul>
 <p>The <code>criticmarkup-accept.py</code> and <code>criticmarkup-reject.py</code> are extracted from the OS X System Services from <a href="http://criticmarkup.com/services.php">CriticMarkup Toolkit</a>.</p>
+<h2 id="note-on-latex-output-usepackage-required">Note on LaTeX Output: Usepackage Required</h2>
+<p>Note that the latex output requires the LaTeX packages <code>color</code> and <code>soul</code>. As you can see from this markdown file, I used a hack to guarantee your pandoc standard template also use them, like this: <code>fontfamily: lmodern,color,soul</code>.</p>
+<p>In my personal use, I have an YAML of <code>usepackage: [color,soul]</code> that in my template will added <code>\usepackage{color,soul}</code>. See <a href="https://github.com/ickc/pandoc-templates/tree/latex-usepackage-hyperref">ickc/pandoc-templates at latex-usepackage-hyperref</a> for details.</p>
 <h1 id="usage">Usage</h1>
 <p><code>pandoc-criticmarkup.sh [options...] [file]</code></p>
 <p>Options:</p>
@@ -87,18 +90,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>If <code>-d</code> is used, the others are ignored,</li>
 <li>if <code>-r</code> is used, <code>-a</code> is ignored</li>
 </ul>
-<p>It can be used with the pandoc commands, like these (see build.sh):</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">./pandoc-criticmarkup.sh</span> -d html README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-diff.html
-<span class="kw">./pandoc-criticmarkup.sh</span> -d latex README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-diff.tex
-<span class="kw">./pandoc-criticmarkup.sh</span> -d pdf README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-diff.pdf
-
-<span class="kw">./pandoc-criticmarkup.sh</span> -a README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-accept.html
-<span class="kw">./pandoc-criticmarkup.sh</span> -a README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-accept.tex
-<span class="kw">./pandoc-criticmarkup.sh</span> -a README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-accept.pdf
-
-<span class="kw">./pandoc-criticmarkup.sh</span> -r README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-reject.html
-<span class="kw">./pandoc-criticmarkup.sh</span> -r README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-reject.tex
-<span class="kw">./pandoc-criticmarkup.sh</span> -r README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README-reject.pdf  </code></pre></div>
+<p>It can be used with the pandoc commands, like these (see <code>build.sh</code> for more examples):</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">## Showing Difference and not overwriting</span>
+<span class="kw">./pandoc-criticmarkup.sh</span> -d html README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README.html
+<span class="kw">./pandoc-criticmarkup.sh</span> -d pdf README.md <span class="kw">|</span> <span class="kw">pandoc</span> -s -o README.pdf
+<span class="co">## accept or reject while overwriting the source</span>
+<span class="kw">./pandoc-criticmarkup.sh</span> -ap README-accept.md
+<span class="kw">./pandoc-criticmarkup.sh</span> -rp README-reject.md</code></pre></div>
 <h1 id="appendix-mapping-for-showing-differences">Appendix: Mapping for Showing Differences</h1>
 <table>
 <thead>
