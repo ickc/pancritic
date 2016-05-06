@@ -52,6 +52,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2 class="author">Kolen Cheung</h2>
 </div>
 <p>Using CriticMarkup with pandoc---not a filter but a preprocessor.</p>
+<h1 id="caveats">Caveats</h1>
+<p>The way this script works depends on the fact that pandoc allows RAW HTML and RAW LaTeX in the markdown source. The CriticMarkup is transformed into either a RAW HTML or RAW LaTeX representations (specified by the command line arguments).</p>
+<p>Because of the asymmetry in the way pandoc handle RAW HTML and RAW LaTeX (namely, markdown inside RAW HTML are parsed, but not in RAW LaTeX), markdown within the CriticMarkup will not be rendered in LaTeX output. This filter might help if you want to change that: <a href="https://gist.github.com/mpickering/f1718fcdc4c56273ed52">LaTeX Argument Parser</a>.</p>
 <h1 id="definition-of-criticmarkup">Definition of CriticMarkup</h1>
 <ul>
 <li>Deletions: This is <del>is </del>a test.</li>
@@ -102,6 +105,10 @@ What is a test for?
 <span class="co">## accept or reject while overwriting the source</span>
 <span class="kw">./pandoc-criticmarkup.sh</span> -ap README-accept.md
 <span class="kw">./pandoc-criticmarkup.sh</span> -rp README-reject.md</code></pre></div>
+<h1 id="todo">Todo</h1>
+<ul>
+<li>do not create temp file but put in a variable instead</li>
+</ul>
 <h1 id="appendix">Appendix</h1>
 <h2 id="css">CSS</h2>
 <p>An optional CSS <code>pandoc-criticmarkup.css</code> make the deletions and additions more obvious in HTML output.</p>

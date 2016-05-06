@@ -97,6 +97,20 @@
 
 Using CriticMarkup with pandoc---not a filter but a preprocessor.
 
+\section{Caveats}\label{caveats}
+
+The way this script works depends on the fact that pandoc allows RAW
+HTML and RAW LaTeX in the markdown source. The CriticMarkup is
+transformed into either a RAW HTML or RAW LaTeX representations
+(specified by the command line arguments).
+
+Because of the asymmetry in the way pandoc handle RAW HTML and RAW LaTeX
+(namely, markdown inside RAW HTML are parsed, but not in RAW LaTeX),
+markdown within the CriticMarkup will not be rendered in LaTeX output.
+This filter might help if you want to change that:
+\href{https://gist.github.com/mpickering/f1718fcdc4c56273ed52}{LaTeX
+Argument Parser}.
+
 \section{Definition of CriticMarkup}\label{definition-of-criticmarkup}
 
 \begin{itemize}
@@ -201,6 +215,14 @@ It can be used with the pandoc commands, like these (see
 \KeywordTok{./pandoc-criticmarkup.sh} \NormalTok{-rp README-reject.md}
 \end{Highlighting}
 \end{Shaded}
+
+\section{Todo}\label{todo}
+
+\begin{itemize}
+\tightlist
+\item
+  do not create temp file but put in a variable instead
+\end{itemize}
 
 \section{Appendix}\label{appendix}
 

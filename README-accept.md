@@ -6,6 +6,12 @@ fontfamily: lmodern,color,soul
 
 Using CriticMarkup with pandoc---not a filter but a preprocessor.
 
+# Caveats
+
+The way this script works depends on the fact that pandoc allows RAW HTML and RAW LaTeX in the markdown source. The CriticMarkup is transformed into either a RAW HTML or RAW LaTeX representations (specified by the command line arguments).
+
+Because of the asymmetry in the way pandoc handle RAW HTML and RAW LaTeX (namely, markdown inside RAW HTML are parsed, but not in RAW LaTeX), markdown within the CriticMarkup will not be rendered in LaTeX output. This filter might help if you want to change that: [LaTeX Argument Parser](https://gist.github.com/mpickering/f1718fcdc4c56273ed52).
+
 # Definition of CriticMarkup #
 
 - Deletions: This is a test.
@@ -61,6 +67,10 @@ It can be used with the pandoc commands, like these (see `build.sh` for more exa
 ./pandoc-criticmarkup.sh -ap README-accept.md
 ./pandoc-criticmarkup.sh -rp README-reject.md
 ```
+
+# Todo
+
+- do not create temp file but put in a variable instead
 
 # Appendix
 
