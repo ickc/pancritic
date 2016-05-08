@@ -12,6 +12,10 @@ The way this script works depends on the fact that pandoc allows RAW HTML and RA
 
 Because of the asymmetry in the way pandoc handle RAW HTML and RAW LaTeX (namely, markdown inside RAW HTML are parsed, but not in RAW LaTeX), markdown within the CriticMarkup will not be rendered in LaTeX output. This filter might help if you want to change that: [LaTeX Argument Parser](https://gist.github.com/mpickering/f1718fcdc4c56273ed52).
 
+Another caveat is that nesting CriticMarkup might have unexpected behavior, especially in LaTeX output. For example, the [test.md](test.md) file do not have a valid LaTeX output because of nesting CriticMarkup.
+
+Lastly, see [the caveats section in the spec of CriticMarkup](http://criticmarkup.com/spec.php#caveats).
+
 # Definition of CriticMarkup #
 
 - Deletions: This is is a test.
@@ -68,6 +72,10 @@ It can be used with the pandoc commands, like these (see `build.sh` for more exa
 ./pandoc-criticmarkup.sh -rp README-reject.md
 ```
 
+# Todo #
+
+- add a minimal CSS (especially for the HTML aside element)
+
 # Appendix
 
 ## CSS ##
@@ -83,3 +91,7 @@ An optional CSS `pandoc-criticmarkup.css` make the deletions and additions more 
 | `[text1]`	| `<del>[text1]</del><ins>[text2]</ins>`	| `\st{[text1]}\underline{[text2]}`	| 
 | `[text]`	| `<mark>[text]</mark>`	| `\hl{[text]}`	| 
 | `<!-- [text] -->`	| `<aside>[text]</aside>`	| `\marginpar{[text]}`	|  
+
+## Test Files From MMD ##
+
+[test.md](test.md) is from [MMD-Test-Suite/Critic.text at master · fletcher/MMD-Test-Suite](https://github.com/fletcher/MMD-Test-Suite/blob/master/CriticMarkup/Critic.text)

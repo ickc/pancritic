@@ -111,6 +111,13 @@ This filter might help if you want to change that:
 \href{https://gist.github.com/mpickering/f1718fcdc4c56273ed52}{LaTeX
 Argument Parser}.
 
+Another caveat is that nesting CriticMarkup might have unexpected
+behavior, especially in LaTeX output. For example, the \url{test.md}
+file do not have a valid LaTeX output because of nesting CriticMarkup.
+
+Lastly, see \href{http://criticmarkup.com/spec.php\#caveats}{the caveats
+section in the spec of CriticMarkup}.
+
 \section{Definition of CriticMarkup}\label{definition-of-criticmarkup}
 
 \begin{itemize}
@@ -216,6 +223,14 @@ It can be used with the pandoc commands, like these (see
 \end{Highlighting}
 \end{Shaded}
 
+\section{Todo}\label{todo}
+
+\begin{itemize}
+\tightlist
+\item
+  add a minimal CSS (especially for the HTML aside element)
+\end{itemize}
+
 \section{Appendix}\label{appendix}
 
 \subsection{CSS}\label{css}
@@ -250,5 +265,11 @@ critic markup & HTML & LaTeX\tabularnewline
 \texttt{\textless{}!-\/-\ {[}text{]}\ -\/-\textgreater{}} \textbar{}
 \texttt{\textless{}aside\textgreater{}{[}text{]}\textless{}/aside\textgreater{}}
 \textbar{} \texttt{\textbackslash{}marginpar\{{[}text{]}\}} \textbar{}
+
+\subsection{Test Files From MMD}\label{test-files-from-mmd}
+
+\url{test.md} is from
+\href{https://github.com/fletcher/MMD-Test-Suite/blob/master/CriticMarkup/Critic.text}{MMD-Test-Suite/Critic.text
+at master · fletcher/MMD-Test-Suite}
 
 \end{document}

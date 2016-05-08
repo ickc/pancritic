@@ -55,6 +55,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1 id="caveats">Caveats</h1>
 <p>The way this script works depends on the fact that pandoc allows RAW HTML and RAW LaTeX in the markdown source. The CriticMarkup is transformed into either a RAW HTML or RAW LaTeX representations (specified by the command line arguments).</p>
 <p>Because of the asymmetry in the way pandoc handle RAW HTML and RAW LaTeX (namely, markdown inside RAW HTML are parsed, but not in RAW LaTeX), markdown within the CriticMarkup will not be rendered in LaTeX output. This filter might help if you want to change that: <a href="https://gist.github.com/mpickering/f1718fcdc4c56273ed52">LaTeX Argument Parser</a>.</p>
+<p>Another caveat is that nesting CriticMarkup might have unexpected behavior, especially in LaTeX output. For example, the <a href="test.md" class="uri">test.md</a> file do not have a valid LaTeX output because of nesting CriticMarkup.</p>
+<p>Lastly, see <a href="http://criticmarkup.com/spec.php#caveats">the caveats section in the spec of CriticMarkup</a>.</p>
 <h1 id="definition-of-criticmarkup">Definition of CriticMarkup</h1>
 <ul>
 <li>Deletions: This is is a test.</li>
@@ -101,6 +103,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="co">## accept or reject while overwriting the source</span>
 <span class="kw">./pandoc-criticmarkup.sh</span> -ap README-accept.md
 <span class="kw">./pandoc-criticmarkup.sh</span> -rp README-reject.md</code></pre></div>
+<h1 id="todo">Todo</h1>
+<ul>
+<li>add a minimal CSS (especially for the HTML aside element)</li>
+</ul>
 <h1 id="appendix">Appendix</h1>
 <h2 id="css">CSS</h2>
 <p>An optional CSS <code>pandoc-criticmarkup.css</code> make the deletions and additions more obvious in HTML output.</p>
@@ -125,5 +131,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <code>[text1]</code> | <code>&lt;del&gt;[text1]&lt;/del&gt;&lt;ins&gt;[text2]&lt;/ins&gt;</code> | <code>\st{[text1]}\underline{[text2]}</code> |<br />
 <code>[text]</code> | <code>&lt;mark&gt;[text]&lt;/mark&gt;</code> | <code>\hl{[text]}</code> |<br />
 <code>&lt;!-- [text] --&gt;</code> | <code>&lt;aside&gt;[text]&lt;/aside&gt;</code> | <code>\marginpar{[text]}</code> |</p>
+<h2 id="test-files-from-mmd">Test Files From MMD</h2>
+<p><a href="test.md" class="uri">test.md</a> is from <a href="https://github.com/fletcher/MMD-Test-Suite/blob/master/CriticMarkup/Critic.text">MMD-Test-Suite/Critic.text at master · fletcher/MMD-Test-Suite</a></p>
 </body>
 </html>
