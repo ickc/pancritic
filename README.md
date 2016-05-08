@@ -68,10 +68,6 @@ It can be used with the pandoc commands, like these (see `build.sh` for more exa
 ./pandoc-criticmarkup.sh -rp README-reject.md
 ```
 
-# Todo
-
-- do not create temp file but put in a variable instead
-
 # Appendix
 
 ## CSS ##

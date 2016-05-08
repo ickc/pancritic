@@ -1,6 +1,5 @@
 #!/bin/bash
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $DIR
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # getopts
 
@@ -37,22 +36,10 @@ if [ "$output_EXT" != '' ] && [ "$output_EXT" != "html" ] && [ "$output_EXT" != 
 	exit 1
 fi
 
-##debug
-## echo "accept: "$accept "; reject: " $reject "; permanent: " $permanent "; output extension: " $output_EXT "."
-
 # preparation
 
-## get paths and extension
-PATHNAME="$@"
-PATHNAMEWOEXT=${PATHNAME%.*}
-EXT=${PATHNAME##*.}
-### ext="${EXT,,}" #This does not work on Mac's default, old version of, bash.
-
-## copy or permanent?
-if [ $permanent = false ]; then
-	cp "$PATHNAME" "$PATHNAMEWOEXT-critic.$EXT"
-	PATHNAME="$PATHNAMEWOEXT-critic.$EXT"
-fi
+## get the content of the file
+CONTENT=$(<$@)
 
 # cooking the result
 
@@ -61,67 +48,63 @@ if [ "$output_EXT" = "html" ] || [ "$output_EXT" = "latex" ] || [ "$output_EXT" 
 ### if html then show CriticMarkup in html
 	if [ "$output_EXT" = "html" ]; then
 		#### sub
-		sed -i '' s/'~~}'/'<\/ins>'/g "$PATHNAME"
-		sed -i '' s/'{~~'/'<del>'/g "$PATHNAME"
-		sed -i '' s/'~>'/'<\/del><ins>'/g "$PATHNAME"
+		CONTENT=$(echo "$CONTENT" | sed -e s/'~~}'/'<\/ins>'/g)
+		CONTENT=$(echo "$CONTENT" | sed -e s/'{~~'/'<del>'/g)
+		CONTENT=$(echo "$CONTENT" | sed -e s/'~>'/'<\/del><ins>'/g)
 		#### del
-		sed -i '' s/'{--'/'<del>'/g "$PATHNAME"
-		sed -i '' s/'--}'/'<\/del>'/g "$PATHNAME"
+		CONTENT=$(echo "$CONTENT" | sed -e s/'{--'/'<del>'/g)
+		CONTENT=$(echo "$CONTENT" | sed -e s/'--}'/'<\/del>'/g)
 		#### ins
-		sed -i '' s/'{++'/'<ins>'/g "$PATHNAME"
-		sed -i '' s/'++}'/'<\/ins>'/g "$PATHNAME"
+		CONTENT=$(echo "$CONTENT" | sed -e s/'{++'/'<ins>'/g)
+		CONTENT=$(echo "$CONTENT" | sed -e s/'++}'/'<\/ins>'/g)
 		#### mark
-		sed -i '' s/'{=='/'<mark>'/g "$PATHNAME"
-		sed -i '' s/'==}'/'<\/mark>'/g "$PATHNAME"
+		CONTENT=$(echo "$CONTENT" | sed -e s/'{=='/'<mark>'/g)
+		CONTENT=$(echo "$CONTENT" | sed -e s/'==}'/'<\/mark>'/g)
 		#### comment
-		sed -i '' s/'{>>'/'<aside>'/g "$PATHNAME"
-		sed -i '' s/'<<}'/'<\/aside>'/g "$PATHNAME"
+		CONTENT=$(echo "$CONTENT" | sed -e s/'{>>'/'<aside>'/g)
+		CONTENT=$(echo "$CONTENT" | sed -e s/'<<}'/'<\/aside>'/g)
 ### else (latex/pdf) then show CriticMarkup in latex
 	else
 		#### sub
-		sed -i '' s/'~~}'/'}'/g "$PATHNAME"
-		sed -i '' s/'{~~'/'\\st{'/g "$PATHNAME"
-		sed -i '' s/'~>'/'}\\underline{'/g "$PATHNAME"
+		CONTENT=$(echo "$CONTENT" | sed -e s/'~~}'/'}'/g)
+		CONTENT=$(echo "$CONTENT" | sed -e s/'{~~'/'\\st{'/g)
+		CONTENT=$(echo "$CONTENT" | sed -e s/'~>'/'}\\underline{'/g)
 		#### del
-		sed -i '' s/'{--'/'\\st{'/g "$PATHNAME"
-		sed -i '' s/'--}'/'}'/g "$PATHNAME"
+		CONTENT=$(echo "$CONTENT" | sed -e s/'{--'/'\\st{'/g)
+		CONTENT=$(echo "$CONTENT" | sed -e s/'--}'/'}'/g)
 		#### ins
-		sed -i '' s/'{++'/'\\underline{'/g "$PATHNAME"
-		sed -i '' s/'++}'/'}'/g "$PATHNAME"
+		CONTENT=$(echo "$CONTENT" | sed -e s/'{++'/'\\underline{'/g)
+		CONTENT=$(echo "$CONTENT" | sed -e s/'++}'/'}'/g)
 		#### mark
-		sed -i '' s/'{=='/'\\hl{'/g "$PATHNAME"
-		sed -i '' s/'==}'/'}'/g "$PATHNAME"
+		CONTENT=$(echo "$CONTENT" | sed -e s/'{=='/'\\hl{'/g)
+		CONTENT=$(echo "$CONTENT" | sed -e s/'==}'/'}'/g)
 		#### comment
-		sed -i '' s/'{>>'/'\\marginpar{'/g "$PATHNAME"
-		sed -i '' s/'<<}'/'}'/g "$PATHNAME"
+		CONTENT=$(echo "$CONTENT" | sed -e s/'{>>'/'\\marginpar{'/g)
+		CONTENT=$(echo "$CONTENT" | sed -e s/'<<}'/'}'/g)
 ## else (not d, not showing CriticMarkup)
 	fi
 else
 ### if r or a then remove highlights and archive comments
 	if [ $reject = true ] || [ $accept = true ]; then
 		#### mark
-		sed -i '' s/'{=='/''/g "$PATHNAME"
-		sed -i '' s/'==}'/''/g "$PATHNAME"
+		CONTENT=$(echo "$CONTENT" | sed -e s/'{=='/''/g)
+		CONTENT=$(echo "$CONTENT" | sed -e s/'==}'/''/g)
 		#### comment
-		sed -i '' s/'{>>'/'<\!-- '/g "$PATHNAME"
-		sed -i '' s/'<<}'/' -->'/g "$PATHNAME"
+		CONTENT=$(echo "$CONTENT" | sed -e s/'{>>'/'<\!-- '/g)
+		CONTENT=$(echo "$CONTENT" | sed -e s/'<<}'/' -->'/g)
 #### if r then reject
 		if [ $reject = true ]; then
-			./criticmarkup-reject.py "$PATHNAME" > "$PATHNAMEWOEXT-temp.$EXT"
-			cp "$PATHNAMEWOEXT-temp.$EXT" "$PATHNAME"
-			mv "$PATHNAMEWOEXT-temp.$EXT" ~/.Trash/
+			CONTENT=$(./criticmarkup-reject.py "$CONTENT")
 #### else (a then accept)
 		else
-			./criticmarkup-accept.py "$PATHNAME" > "$PATHNAMEWOEXT-temp.$EXT"
-			cp "$PATHNAMEWOEXT-temp.$EXT" "$PATHNAME"
-			mv "$PATHNAMEWOEXT-temp.$EXT" ~/.Trash/
+			CONTENT=$(./criticmarkup-accept.py "$CONTENT")
 		fi
 	fi
 fi
 
-# put result in stdout
-cat "$PATHNAME"
-# cleanup if not permanent
+# output
 if [ $permanent = false ]; then
-	mv "$PATHNAMEWOEXT-critic.$EXT" ~/.Trash/
+	echo "$CONTENT"
+else
+	echo "$CONTENT" > "$@"
 fi

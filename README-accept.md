@@ -68,10 +68,6 @@ It can be used with the pandoc commands, like these (see `build.sh` for more exa
 ./pandoc-criticmarkup.sh -rp README-reject.md
 ```
 
-# Todo
-
-- do not create temp file but put in a variable instead
-
 # Appendix
 
 ## CSS ##
@@ -87,4 +83,3 @@ An optional CSS `pandoc-criticmarkup.css` make the deletions and additions more 
 | `[text2]`	| `<del>[text1]</del><ins>[text2]</ins>`	| `\st{[text1]}\underline{[text2]}`	| 
 | `[text]`	| `<mark>[text]</mark>`	| `\hl{[text]}`	| 
 | `<!-- [text] -->`	| `<aside>[text]</aside>`	| `\marginpar{[text]}`	|  
-
