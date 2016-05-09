@@ -45,57 +45,48 @@ CONTENT=$(<$@)
 
 ## if d then show diff (CriticMarkup)
 if [ "$output_EXT" = "html" ] || [ "$output_EXT" = "latex" ] || [ "$output_EXT" = "pdf" ]; then
-### if html then show CriticMarkup in html
+### if html then show CriticMarkup in html (sub, del, ins, mark, comment)
 	if [ "$output_EXT" = "html" ]; then
-		#### sub
-		CONTENT=$(echo "$CONTENT" | sed -e s/'~~}'/'<\/ins>'/g)
-		CONTENT=$(echo "$CONTENT" | sed -e s/'{~~'/'<del>'/g)
-		CONTENT=$(echo "$CONTENT" | sed -e s/'~>'/'<\/del><ins>'/g)
-		#### del
-		CONTENT=$(echo "$CONTENT" | sed -e s/'{--'/'<del>'/g)
-		CONTENT=$(echo "$CONTENT" | sed -e s/'--}'/'<\/del>'/g)
-		#### ins
-		CONTENT=$(echo "$CONTENT" | sed -e s/'{++'/'<ins>'/g)
-		CONTENT=$(echo "$CONTENT" | sed -e s/'++}'/'<\/ins>'/g)
-		#### mark
-		CONTENT=$(echo "$CONTENT" | sed -e s/'{=='/'<mark>'/g)
-		CONTENT=$(echo "$CONTENT" | sed -e s/'==}'/'<\/mark>'/g)
-		#### comment
-		CONTENT=$(echo "$CONTENT" | sed -e s/'{>>'/'<aside>'/g)
-		CONTENT=$(echo "$CONTENT" | sed -e s/'<<}'/'<\/aside>'/g)
-### else (latex/pdf) then show CriticMarkup in latex
+		CONTENT=$(echo "$CONTENT" | sed \
+			-e s/'~~}'/'<\/ins>'/g \
+			-e s/'{~~'/'<del>'/g \
+			-e s/'~>'/'<\/del><ins>'/g \
+			-e s/'{--'/'<del>'/g \
+			-e s/'--}'/'<\/del>'/g \
+			-e s/'{++'/'<ins>'/g \
+			-e s/'++}'/'<\/ins>'/g \
+			-e s/'{=='/'<mark>'/g \
+			-e s/'==}'/'<\/mark>'/g \
+			-e s/'{>>'/'<aside>'/g \
+			-e s/'<<}'/'<\/aside>'/g)
+### else (latex/pdf) then show CriticMarkup in latex (sub, del, ins, mark, comment)
 	else
-		#### sub
-		CONTENT=$(echo "$CONTENT" | sed -e s/'~~}'/'}'/g)
-		CONTENT=$(echo "$CONTENT" | sed -e s/'{~~'/'\\st{'/g)
-		CONTENT=$(echo "$CONTENT" | sed -e s/'~>'/'}\\underline{'/g)
-		#### del
-		CONTENT=$(echo "$CONTENT" | sed -e s/'{--'/'\\st{'/g)
-		CONTENT=$(echo "$CONTENT" | sed -e s/'--}'/'}'/g)
-		#### ins
-		CONTENT=$(echo "$CONTENT" | sed -e s/'{++'/'\\underline{'/g)
-		CONTENT=$(echo "$CONTENT" | sed -e s/'++}'/'}'/g)
-		#### mark
-		CONTENT=$(echo "$CONTENT" | sed -e s/'{=='/'\\hl{'/g)
-		CONTENT=$(echo "$CONTENT" | sed -e s/'==}'/'}'/g)
-		#### comment
-		CONTENT=$(echo "$CONTENT" | sed -e s/'{>>'/'\\marginpar{'/g)
-		CONTENT=$(echo "$CONTENT" | sed -e s/'<<}'/'}'/g)
+		CONTENT=$(echo "$CONTENT" | sed \
+			-e s/'~~}'/'}'/g \
+			-e s/'{~~'/'\\st{'/g \
+			-e s/'~>'/'}\\underline{'/g \
+			-e s/'{--'/'\\st{'/g \
+			-e s/'--}'/'}'/g \
+			-e s/'{++'/'\\underline{'/g \
+			-e s/'++}'/'}'/g \
+			-e s/'{=='/'\\hl{'/g \
+			-e s/'==}'/'}'/g \
+			-e s/'{>>'/'\\marginpar{'/g \
+			-e s/'<<}'/'}'/g)
 ## else (not d, not showing CriticMarkup)
 	fi
 else
 ### if r or a then remove highlights and archive comments
 	if [ $reject = true ] || [ $accept = true ]; then
-		#### mark
-		CONTENT=$(echo "$CONTENT" | sed -e s/'{=='/''/g)
-		CONTENT=$(echo "$CONTENT" | sed -e s/'==}'/''/g)
-		#### comment
-		CONTENT=$(echo "$CONTENT" | sed -e s/'{>>'/'<\!-- '/g)
-		CONTENT=$(echo "$CONTENT" | sed -e s/'<<}'/' -->'/g)
-#### if r then reject
+		CONTENT=$(echo "$CONTENT" | sed \
+			-e s/'{=='/''/g \
+			-e s/'==}'/''/g \
+			-e s/'{>>'/'<\!-- '/g \
+			-e s/'<<}'/' -->'/g)
+#### if r then reject sub, del, ins
 		if [ $reject = true ]; then
 			CONTENT=$(./criticmarkup-reject.py "$CONTENT")
-#### else (a then accept)
+#### else (a then accept sub, del, ins)
 		else
 			CONTENT=$(./criticmarkup-accept.py "$CONTENT")
 		fi
