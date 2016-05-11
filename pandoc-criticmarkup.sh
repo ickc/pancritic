@@ -39,7 +39,7 @@ fi
 # preparation
 
 ## get the content of the file
-CONTENT=$(<$@)
+CONTENT=$(<"$@")
 
 # cooking the result
 
