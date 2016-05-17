@@ -1,6 +1,5 @@
 #!/bin/bash
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $DIR
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Preparation: I made a copy first so that your test is not overwritten
 cp test.md test-accept.md
