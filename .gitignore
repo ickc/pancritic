@@ -1,5 +1,4 @@
 # macOS files
 .DS_Store
 
-test/*
-!test/test.md
+test/
