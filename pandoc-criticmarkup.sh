@@ -31,8 +31,8 @@ shift $((OPTIND-1))
 [ "$1" = "--" ] && shift
 
 ## check output_EXT
-if [ "$output_EXT" != '' ] && [ "$output_EXT" != "html" ] && [ "$output_EXT" != "latex" ] && [ "$output_EXT" != "pdf" ]; then
-	echo "Output format should be either html or latex/pdf."
+if [ "$output_EXT" != '' ] && [ "$output_EXT" != "html" ] && [ "$output_EXT" != "tex" ] && [ "$output_EXT" != "pdf" ]; then
+	echo "Output format should be either html or tex/pdf."
 	exit 1
 fi
 
@@ -44,7 +44,7 @@ CONTENT=$(<"$@")
 # cooking the result
 
 ## if d then show diff (CriticMarkup)
-if [ "$output_EXT" = "html" ] || [ "$output_EXT" = "latex" ] || [ "$output_EXT" = "pdf" ]; then
+if [ "$output_EXT" = "html" ] || [ "$output_EXT" = "tex" ] || [ "$output_EXT" = "pdf" ]; then
 ### if html then show CriticMarkup in html (sub, del, ins, mark, comment)
 	if [ "$output_EXT" = "html" ]; then
 		CONTENT=$(echo "$CONTENT" | sed \
@@ -59,7 +59,7 @@ if [ "$output_EXT" = "html" ] || [ "$output_EXT" = "latex" ] || [ "$output_EXT" 
 			-e s/'==}'/'<\/mark>'/g \
 			-e s/'{>>'/'<aside>'/g \
 			-e s/'<<}'/'<\/aside>'/g)
-### else (latex/pdf) then show CriticMarkup in latex (sub, del, ins, mark, comment)
+### else (tex/pdf) then show CriticMarkup in tex (sub, del, ins, mark, comment)
 	else
 		CONTENT=$(echo "$CONTENT" | sed \
 			-e s/'~~}'/'}'/g \

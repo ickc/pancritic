@@ -26,7 +26,7 @@ The `criticmarkup-accept.py` and `criticmarkup-reject.py` are extracted from the
 
 ## Note on LaTeX Output: Usepackage Required ##
 
-Note that the latex output requires the LaTeX packages `color` and `soul`.
+Note that the LaTeX output requires the LaTeX packages `color` and `soul`.
 
 One can achieve this by either using a custom template or `--include-in-header` option. Or you can use the trick of putting the following in your YAML front matter, like this file:
 
@@ -47,7 +47,7 @@ Options:
 - permanent: `-p`
 - show diff: `-d`
 	- `-d html`: targeting html output using raw HTML
-	- `-d latex`: targeting LaTeX output using raw LaTeX
+	- `-d tex`: targeting LaTeX output using raw LaTeX
 	- `-d pdf`: same as above
 
 If permanent is used, it will overwrite the original, if not, it will output to `stdout`. In most situation permanent should be used with `-a` or `-r` only, but it can be used with `-d` as well.
