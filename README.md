@@ -2,19 +2,9 @@
 title: Using CriticMarkup with pandoc
 author: Kolen Cheung
 fontfamily: lmodern,color,soul
----
+...
 
 Using CriticMarkup with pandoc---not a filter but a preprocessor.
-
-# Caveats
-
-The way this script works depends on the fact that pandoc allows RAW HTML and RAW LaTeX in the markdown source. The CriticMarkup is transformed into either a RAW HTML or RAW LaTeX representations (specified by the command line arguments).
-
-Because of the asymmetry in the way pandoc handle RAW HTML and RAW LaTeX (namely, markdown inside RAW HTML are parsed, but not in RAW LaTeX), markdown within the CriticMarkup will not be rendered in LaTeX output. This filter might help if you want to change that: [LaTeX Argument Parser](https://gist.github.com/mpickering/f1718fcdc4c56273ed52).
-
-Another caveat is that nesting CriticMarkup might have unexpected behavior, especially in LaTeX output. For example, the [test.md](test.md) file do not have a valid LaTeX output because of nesting CriticMarkup.
-
-Lastly, see [the caveats section in the spec of CriticMarkup](http://criticmarkup.com/spec.php#caveats).
 
 # Definition of CriticMarkup #
 
@@ -26,19 +16,25 @@ Lastly, see [the caveats section in the spec of CriticMarkup](http://criticmarku
 
 # The Scripts #
 
-These scripts are supposed to be in the same folder:
-
-- `criticmarkup-accept.py`
-- `criticmarkup-reject.py`
 - `pandoc-criticmarkup.sh`
+	- `criticmarkup-reject.py`
+	- `criticmarkup-accept.py`
+
+`pandoc-criticmarkup.sh` will looks for the other 2 scripts in the same folder.
 
 The `criticmarkup-accept.py` and `criticmarkup-reject.py` are extracted from the OS X System Services from [CriticMarkup Toolkit](http://criticmarkup.com/services.php).
 
 ## Note on LaTeX Output: Usepackage Required ##
 
-Note that the latex output requires the LaTeX packages `color` and `soul`. As you can see from this markdown file, I used a hack to guarantee your pandoc standard template also use them, like this: `fontfamily: lmodern,color,soul`.
+Note that the latex output requires the LaTeX packages `color` and `soul`.
 
-In my personal use, I have an YAML of `usepackage: [color,soul]` that in my template will added `\usepackage{color,soul}`. See [ickc/pandoc-templates at latex-usepackage-hyperref](https://github.com/ickc/pandoc-templates/tree/latex-usepackage-hyperref) for details.
+One can achieve this by either using a custom template or `--include-in-header` option. Or you can use the trick of putting the following in your YAML front matter, like this file:
+
+```yaml
+---
+fontfamily: lmodern,color,soul
+...
+```
 
 # Usage #
 
@@ -50,8 +46,8 @@ Options:
 - reject: `-r`
 - permanent: `-p`
 - show diff: `-d`
-	- `-d html`: targeting html output using RAW HTML
-	- `-d latex`: targeting LaTeX output using RAW LaTeX
+	- `-d html`: targeting html output using raw HTML
+	- `-d latex`: targeting LaTeX output using raw LaTeX
 	- `-d pdf`: same as above
 
 If permanent is used, it will overwrite the original, if not, it will output to `stdout`. In most situation permanent should be used with `-a` or `-r` only, but it can be used with `-d` as well.
@@ -61,7 +57,7 @@ If permanent is used, it will overwrite the original, if not, it will output to 
 - If `-d` is used, the others are ignored,
 - if `-r` is used, `-a` is ignored
 
-It can be used with the pandoc commands, like these (see `build.sh` for more examples):
+It can be used with the pandoc commands, like these:
 
 ```bash
 ## Showing Difference and not overwriting
@@ -71,6 +67,16 @@ It can be used with the pandoc commands, like these (see `build.sh` for more exa
 ./pandoc-criticmarkup.sh -ap README-accept.md
 ./pandoc-criticmarkup.sh -rp README-reject.md
 ```
+
+# Caveats
+
+The way this script works depends on the fact that pandoc allows raw HTML and raw LaTeX in the markdown source. The CriticMarkup is transformed into either a raw HTML or raw LaTeX representation (specified by the command line arguments).
+
+Because of the asymmetry in the way pandoc handle raw HTML and raw LaTeX (namely, markdown inside raw HTML are parsed, but not in raw LaTeX), markdown within the CriticMarkup will not be rendered in LaTeX output. If you want to change this behavior, you can take a look at: [LaTeX Argument Parser](https://gist.github.com/mpickering/f1718fcdc4c56273ed52).
+
+Another caveat is that nesting CriticMarkup might have unexpected behavior, especially in LaTeX output. For example, the [test.md](test.md) file do not have a valid LaTeX output because of nesting CriticMarkup.
+
+Lastly, see [the caveats section in the spec of CriticMarkup](http://criticmarkup.com/spec.php#caveats).
 
 # Todo #
 
