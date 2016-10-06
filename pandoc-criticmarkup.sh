@@ -39,7 +39,11 @@ fi
 # preparation
 
 ## get the content of the file
-CONTENT=$(<"$@")
+if [ $# -ge 1 -a -f "$1" ]; then
+	CONTENT=$(<"$@")
+else
+	CONTENT=$(<"/dev/stdin")
+fi
 
 # cooking the result
 

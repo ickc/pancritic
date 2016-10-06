@@ -42,6 +42,7 @@ fontfamily: lmodern,color,soul
 
 Options:
 
+- if no filename is given, it reads from the stdin
 - accept: `-a`
 - reject: `-r`
 - permanent: `-p`
