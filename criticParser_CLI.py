@@ -16,25 +16,23 @@ File is written to the same directory as the source unless specified with the -o
 
 from __future__ import print_function
 
-import sys
+import argparse
 import os
 import re
-import argparse
 import subprocess
+import sys
 
-add_pattern = r'''(?s)\{\+\+(?P<value>.*?)\+\+[ \t]*(\[(?P<meta>.*?)\])?[ \t]*\}'''
+ADD_PATTERN = r'''(?s)\{\+\+(?P<value>.*?)\+\+[ \t]*(\[(?P<meta>.*?)\])?[ \t]*\}'''
 
-del_pattern = r'''(?s)\{\-\-(?P<value>.*?)\-\-[ \t]*(\[(?P<meta>.*?)\])?[ \t]*\}'''
+DEL_PATTERN = r'''(?s)\{\-\-(?P<value>.*?)\-\-[ \t]*(\[(?P<meta>.*?)\])?[ \t]*\}'''
 
-comm_pattern = r'''(?s)\{\>\>(?P<value>.*?)\<\<\}'''
+COMM_PATTERN = r'''(?s)\{\>\>(?P<value>.*?)\<\<\}'''
 
-gen_comm_pattern = r'''(?s)\{[ \t]*\[(?P<meta>.*?)\][ \t]*\}'''
+SUBS_PATTERN = r'''(?s)\{\~\~(?P<original>(?:[^\~\>]|(?:\~(?!\>)))+)\~\>(?P<new>(?:[^\~\~]|(?:\~(?!\~\})))+)\~\~\}'''
 
-subs_pattern = r'''(?s)\{\~\~(?P<original>(?:[^\~\>]|(?:\~(?!\>)))+)\~\>(?P<new>(?:[^\~\~]|(?:\~(?!\~\})))+)\~\~\}'''
+MARK_PATTERN = r'''(?s)\{\=\=(?P<value>.*?)\=\=\}\{\>\>(?P<comment>.*?)\<\<\}'''
 
-mark_pattern = r'''(?s)\{\=\=(?P<value>.*?)\=\=\}\{\>\>(?P<comment>.*?)\<\<\}'''
-
-a = '''
+CSS = '''
 
 <style>
 	#wrapper {
@@ -226,19 +224,19 @@ a = '''
 </script>
 '''
 
-jq = '''<!DOCTYPE html>
+HEAD_JQ = '''<!DOCTYPE html>
 <html>
 <head><script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <title>Critic Markup Output</title>'''
 
-head = '''<!DOCTYPE html>
+HEAD = '''<!DOCTYPE html>
 <html>
 <head>
 <title>Critic Markup Output</title>'''
 
-bodybegin = '''</head><body><div id="wrapper">'''
+BODY_BEGIN = '''</head><body><div id="wrapper">'''
 
-headend = '''</div></body></html>'''
+HEAD_END = '''</div></body></html>'''
 
 
 def deletionProcess(group_object):
@@ -306,16 +304,16 @@ def main(args):
 
         h = inputText
 
-        h = re.sub(del_pattern, deletionProcess, inputText, flags=re.DOTALL)
+        h = re.sub(DEL_PATTERN, deletionProcess, inputText, flags=re.DOTALL)
 
-        h = re.sub(add_pattern, additionProcess, h, flags=re.DOTALL)
+        h = re.sub(ADD_PATTERN, additionProcess, h, flags=re.DOTALL)
 
-        h = re.sub(mark_pattern, markProcess, h, flags=re.DOTALL)
+        h = re.sub(MARK_PATTERN, markProcess, h, flags=re.DOTALL)
 
         # comment processing must come after highlights
-        h = re.sub(comm_pattern, highlightProcess, h, flags=re.DOTALL)
+        h = re.sub(COMM_PATTERN, highlightProcess, h, flags=re.DOTALL)
 
-        h = re.sub(subs_pattern, subsProcess, h, flags=re.DOTALL)
+        h = re.sub(SUBS_PATTERN, subsProcess, h, flags=re.DOTALL)
 
         if (args.m2):
             import markdown2
@@ -329,9 +327,9 @@ def main(args):
             css_file = args.css
             cssText = css_file.read()
             css_file.close()
-            h = head + cssText + bodybegin + h + headend
+            h = HEAD + cssText + BODY_BEGIN + h + HEAD_END
         else:
-            h = jq + a + bodybegin + h + headend
+            h = HEAD_JQ + CSS + BODY_BEGIN + h + HEAD_END
 
         # If an output file is specified, write to it
         if args.output:
