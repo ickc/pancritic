@@ -415,7 +415,8 @@ def main(args):
     args.output.write(body)
 
 
-def cli():
+def get_args():
+
     parser = argparse.ArgumentParser(description='Convert Critic Markup.')
 
     parser.add_argument('input', type=argparse.FileType('r'), default=sys.stdin,
@@ -439,9 +440,12 @@ def cli():
 
     if not args.to:
         args.to = output_to_format(args.output)
-
     return args
 
 
+def cli():
+    main(get_args())
+
+
 if __name__ == "__main__":
-    main(cli())
+    cli()
