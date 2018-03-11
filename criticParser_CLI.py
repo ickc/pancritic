@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import codecs
 import sys
 import os
@@ -316,7 +317,7 @@ try:
         inputFile.close()
     else:
         log("No source file specified")
-        print "No source file specified"
+        print("No source file specified")
         sys.exit(1)
 
     h = inputText
@@ -335,7 +336,7 @@ try:
     if (args.m2):
         import markdown2
         h = markdown2.markdown(h, extras=['footnotes', 'fenced-code-blocks', 'cuddled-lists', 'code-friendly'])
-        print '\nUsing the Markdown2 module for processing'
+        print('\nUsing the Markdown2 module for processing')
     else:
         import markdown
         h = markdown.markdown(h, extensions=['extra', 'codehilite', 'meta'])
@@ -353,30 +354,30 @@ try:
         filesource = args.output
         abs_path = os.path.abspath(filesource.name)
         output_file = abs_path
-        print output_file
+        print(output_file)
         #file = open(filename, 'wb')
         filesource.write(h)
         filesource.close()
-        print "\nOutput file created:  ", abs_path
+        print("\nOutput file created:  ", abs_path)
     else:
         path, filename = os.path.split(args.source)
-        print "Converting >> " + args.source
+        print("Converting >> " + args.source)
         output_file = path + '/' + filename.split(os.extsep, 1)[0] + '_CriticParseOut.html'
         file = open(output_file, 'w')
         file.write(h.encode('utf-8'))
         file.close()
-        print "\nOutput file created:  " + output_file
+        print("\nOutput file created:  " + output_file)
 
     if (args.browser):
         try:
             retcode = subprocess.call("open " + output_file, shell=True)
             if retcode < 0:
-                print >>sys.stderr, "Child was terminated by signal", -retcode
+                print("Child was terminated by signal", -retcode, file=sys.stderr)
             else:
-                print >>sys.stderr, "Child returned", retcode
-        except OSError, e:
-            print >>sys.stderr, "Execution failed:", e
+                print("Child returned", retcode, file=sys.stderr)
+        except OSError as e:
+            print("Execution failed:", e, file=sys.stderr)
 
 except:
-    print "Unexpected Error: ", sys.exc_info()[0]
+    print("Unexpected Error: ", sys.exc_info()[0])
     raise
