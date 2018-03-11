@@ -289,89 +289,85 @@ def markProcess(group_object):
     replaceString = '<mark>' + group_object.group('value') + '</mark><span class="critic comment">' + group_object.group('comment').replace("\n", " ") + '</span>'
     return replaceString
 
+# filters
+
+
+def criticmarkup_filter(h):
+    h = re.sub(DEL_PATTERN, deletionProcess, h, flags=re.DOTALL)
+
+    h = re.sub(ADD_PATTERN, additionProcess, h, flags=re.DOTALL)
+
+    h = re.sub(MARK_PATTERN, markProcess, h, flags=re.DOTALL)
+
+    # comment processing must come after highlights
+    h = re.sub(COMM_PATTERN, highlightProcess, h, flags=re.DOTALL)
+
+    return re.sub(SUBS_PATTERN, subsProcess, h, flags=re.DOTALL)
+
+
+def markdown_filter(h, m2=False):
+    if m2:
+        try:
+            import markdown2
+            print('Using the Markdown2 module for processing')
+            return markdown2.markdown(h, extras=['footnotes', 'fenced-code-blocks', 'cuddled-lists', 'code-friendly'])
+        except ImportError:
+            print('Cannot import markdown2, use markdown instead.', file=sys.stderr)
+
+    import markdown
+    return markdown.markdown(h, extensions=['extra', 'codehilite', 'meta'])
+
+
+def html_filter(h, head=HEAD_JQ, css=CSS):
+    return head + css + BODY_BEGIN + h + HEAD_END
+
 
 def main(args):
-    try:
+    with open(args.source, "r") as inputFile:
+        h = inputFile.read()
 
-        if args.source:
-            inputFile = open(args.source, "r")
-            inputText = inputFile.read()
-            inputFile.close()
-        else:
-            log("No source file specified")
-            print("No source file specified")
-            sys.exit(1)
+    h = criticmarkup_filter(h)
 
-        h = inputText
+    h = markdown_filter(h, m2=args.m2)
 
-        h = re.sub(DEL_PATTERN, deletionProcess, inputText, flags=re.DOTALL)
+    h = html_filter(h, head=HEAD, css=css_file.read()) if args.css else html_filter(h)
 
-        h = re.sub(ADD_PATTERN, additionProcess, h, flags=re.DOTALL)
+    # If an output file is specified, write to it
+    if args.output:
+        filesource = args.output
+        abs_path = os.path.abspath(filesource.name)
+        output_file = abs_path
+        print(output_file)
+        filesource.write(h)
+        filesource.close()
+        print("Output file created:  ", abs_path)
+    else:
+        path, filename = os.path.split(args.source)
+        print("Converting >> " + args.source)
+        output_file = path + '/' + filename.split(os.extsep, 1)[0] + '_CriticParseOut.html'
+        file = open(output_file, 'w')
+        file.write(h.encode('utf-8'))
+        file.close()
+        print("Output file created:  " + output_file)
 
-        h = re.sub(MARK_PATTERN, markProcess, h, flags=re.DOTALL)
-
-        # comment processing must come after highlights
-        h = re.sub(COMM_PATTERN, highlightProcess, h, flags=re.DOTALL)
-
-        h = re.sub(SUBS_PATTERN, subsProcess, h, flags=re.DOTALL)
-
-        if (args.m2):
-            import markdown2
-            h = markdown2.markdown(h, extras=['footnotes', 'fenced-code-blocks', 'cuddled-lists', 'code-friendly'])
-            print('\nUsing the Markdown2 module for processing')
-        else:
-            import markdown
-            h = markdown.markdown(h, extensions=['extra', 'codehilite', 'meta'])
-
-        if (args.css):
-            css_file = args.css
-            cssText = css_file.read()
-            css_file.close()
-            h = HEAD + cssText + BODY_BEGIN + h + HEAD_END
-        else:
-            h = HEAD_JQ + CSS + BODY_BEGIN + h + HEAD_END
-
-        # If an output file is specified, write to it
-        if args.output:
-            filesource = args.output
-            abs_path = os.path.abspath(filesource.name)
-            output_file = abs_path
-            print(output_file)
-            #file = open(filename, 'wb')
-            filesource.write(h)
-            filesource.close()
-            print("\nOutput file created:  ", abs_path)
-        else:
-            path, filename = os.path.split(args.source)
-            print("Converting >> " + args.source)
-            output_file = path + '/' + filename.split(os.extsep, 1)[0] + '_CriticParseOut.html'
-            file = open(output_file, 'w')
-            file.write(h.encode('utf-8'))
-            file.close()
-            print("\nOutput file created:  " + output_file)
-
-        if (args.browser):
-            try:
-                retcode = subprocess.call("open " + output_file, shell=True)
-                if retcode < 0:
-                    print("Child was terminated by signal", -retcode, file=sys.stderr)
-                else:
-                    print("Child returned", retcode, file=sys.stderr)
-            except OSError as e:
-                print("Execution failed:", e, file=sys.stderr)
-
-    except:
-        print("Unexpected Error: ", sys.exc_info()[0])
-        raise
+    if (args.browser):
+        try:
+            retcode = subprocess.call("open " + output_file, shell=True)
+            if retcode < 0:
+                print("Child was terminated by signal", -retcode, file=sys.stderr)
+            else:
+                print("Child returned", retcode, file=sys.stderr)
+        except OSError as e:
+            print("Execution failed:", e, file=sys.stderr)
 
 
 def cli():
-
     parser = argparse.ArgumentParser(description='Convert Critic Markup to HTML')
+
     parser.add_argument('source', help='The source file path, including file name')
     parser.add_argument('-m2', help='Use the markdown2 python module. If left blank then markdown module is used', action='store_true')
-    parser.add_argument('-o', '--output', help='Path to store the output file, including file name', metavar='out-file', type=argparse.FileType('wt'), required=False)
-    parser.add_argument('-css', '--css', help='Path to a custom CSS file, including file name', metavar='in-file', type=argparse.FileType('rt'), required=False)
+    parser.add_argument('-o', '--output', help='Path to store the output file, including file name', metavar='out-file', type=argparse.FileType('wt'))
+    parser.add_argument('-css', '--css', help='Path to a custom CSS file, including file name', metavar='in-file', type=argparse.FileType('rt'))
     parser.add_argument('-b', '--browser', help='View the output file in the default browser after saving.', action='store_true')
 
     return parser.parse_args()
