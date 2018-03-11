@@ -66,7 +66,7 @@ def get_args():
     parser.add_argument('-f', '--from', dest='from_format',
                         help='Input format. Default: inferred from --input.')
     parser.add_argument('-s', '--standalone', action='store_true',
-                        help='Output standalone html, only useful when output to html.')
+                        help='Output standalone html.')
 
     parser.add_argument('--critic-template', type=argparse.FileType('r'),
                         help='Custom template of CSS and JS for CriticMarkup in diff mode.')
