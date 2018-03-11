@@ -3,7 +3,7 @@ from __future__ import print_function
 import re
 import sys
 
-from pancritic.template import CSS, NAV, JS
+from .template import CSS, NAV, JS
 
 ADD_EDIT = re.compile(r'(?s)\{\+\+(.*?)\+\+[ \t]*(\[(.*?)\])?[ \t]*\}')
 DEL_EDIT = re.compile(r'(?s)\{\-\-(.*?)\-\-[ \t]*(\[(.*?)\])?[ \t]*\}')

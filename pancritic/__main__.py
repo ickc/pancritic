@@ -4,7 +4,7 @@ import argparse
 import os
 import sys
 
-from pancritic.filters import criticmarkup_accept_filter, criticmarkup_reject_filter, criticmarkup_tex_diff_filter, criticmarkup_html_diff_filter, markdown_filter, pandoc_filter, html_filter
+from .filters import criticmarkup_accept_filter, criticmarkup_reject_filter, criticmarkup_tex_diff_filter, criticmarkup_html_diff_filter, markdown_filter, pandoc_filter, html_filter
 
 
 def IO_to_format(output):
