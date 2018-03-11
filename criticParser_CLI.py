@@ -22,16 +22,6 @@ import re
 import subprocess
 import sys
 
-ADD_PATTERN = r'''(?s)\{\+\+(?P<value>.*?)\+\+[ \t]*(\[(?P<meta>.*?)\])?[ \t]*\}'''
-
-DEL_PATTERN = r'''(?s)\{\-\-(?P<value>.*?)\-\-[ \t]*(\[(?P<meta>.*?)\])?[ \t]*\}'''
-
-COMM_PATTERN = r'''(?s)\{\>\>(?P<value>.*?)\<\<\}'''
-
-SUBS_PATTERN = r'''(?s)\{\~\~(?P<original>(?:[^\~\>]|(?:\~(?!\>)))+)\~\>(?P<new>(?:[^\~\~]|(?:\~(?!\~\})))+)\~\~\}'''
-
-MARK_PATTERN = r'''(?s)\{\=\=(?P<value>.*?)\=\=\}\{\>\>(?P<comment>.*?)\<\<\}'''
-
 CSS = '''<style>
 	#wrapper {
 		padding-top: 30px !important;
@@ -227,71 +217,81 @@ BODY_BEGIN = '''</head><body><div id="wrapper">'''
 
 BODY_END = '''</div></body></html>'''
 
-
-def deletionProcess(group_object):
-    replaceString = ''
-    if group_object.group('value') == '\n\n':
-        replaceString = "<del>&nbsp;</del>"
-    else:
-        replaceString = '<del>' + group_object.group('value').replace("\n\n", "&nbsp;") + '</del>'
-    return replaceString
-
-
-def subsProcess(group_object):
-    delString = '<del>' + group_object.group('original') + '</del>'
-    insString = '<ins>' + group_object.group('new') + '</ins>'
-    newString = delString + insString
-    return newString
-
-
-# Converts Addition markup to HTML
-def additionProcess(group_object):
-    replaceString = ''
-
-    # Is there a new paragraph followed by new text
-    if group_object.group('value').startswith('\n\n') and group_object.group('value') != "\n\n":
-        replaceString = "\n\n<ins class='critic' break>&nbsp;</ins>\n\n"
-        replaceString = replaceString + '<ins>' + group_object.group('value').replace("\n", " ")
-        replaceString = replaceString + '</ins>'
-
-    # Is the addition just a single new paragraph
-    elif group_object.group('value') == "\n\n":
-        replaceString = "\n\n<ins class='critic break'>&nbsp;" + '</ins>\n\n'
-
-    # Is it added text followed by a new paragraph?
-    elif group_object.group('value').endswith('\n\n') and group_object.group('value') != "\n\n":
-        replaceString = '<ins>' + group_object.group('value').replace("\n", " ") + '</ins>'
-        replaceString = replaceString + "\n\n<ins class='critic break'>&nbsp;</ins>\n\n"
-
-    else:
-        replaceString = '<ins>' + group_object.group('value').replace("\n", " ") + '</ins>'
-
-    return replaceString
-
-
-def highlightProcess(group_object):
-    replaceString = '<span class="critic comment">' + group_object.group('value').replace("\n", " ") + '</span>'
-    return replaceString
-
-
-def markProcess(group_object):
-    replaceString = '<mark>' + group_object.group('value') + '</mark><span class="critic comment">' + group_object.group('comment').replace("\n", " ") + '</span>'
-    return replaceString
-
 # filters
 
-
 def criticmarkup_filter(body):
-    body = re.sub(DEL_PATTERN, deletionProcess, body, flags=re.DOTALL)
 
-    body = re.sub(ADD_PATTERN, additionProcess, body, flags=re.DOTALL)
+    def deletionProcess(group_object):
+        replaceString = ''
+        if group_object.group('value') == '\n\n':
+            replaceString = "<del>&nbsp;</del>"
+        else:
+            replaceString = '<del>' + group_object.group('value').replace("\n\n", "&nbsp;") + '</del>'
+        return replaceString
 
-    body = re.sub(MARK_PATTERN, markProcess, body, flags=re.DOTALL)
+
+    def subsProcess(group_object):
+        delString = '<del>' + group_object.group('original') + '</del>'
+        insString = '<ins>' + group_object.group('new') + '</ins>'
+        newString = delString + insString
+        return newString
+
+
+    # Converts Addition markup to HTML
+    def additionProcess(group_object):
+        replaceString = ''
+
+        # Is there a new paragraph followed by new text
+        if group_object.group('value').startswith('\n\n') and group_object.group('value') != "\n\n":
+            replaceString = "\n\n<ins class='critic' break>&nbsp;</ins>\n\n"
+            replaceString = replaceString + '<ins>' + group_object.group('value').replace("\n", " ")
+            replaceString = replaceString + '</ins>'
+
+        # Is the addition just a single new paragraph
+        elif group_object.group('value') == "\n\n":
+            replaceString = "\n\n<ins class='critic break'>&nbsp;" + '</ins>\n\n'
+
+        # Is it added text followed by a new paragraph?
+        elif group_object.group('value').endswith('\n\n') and group_object.group('value') != "\n\n":
+            replaceString = '<ins>' + group_object.group('value').replace("\n", " ") + '</ins>'
+            replaceString = replaceString + "\n\n<ins class='critic break'>&nbsp;</ins>\n\n"
+
+        else:
+            replaceString = '<ins>' + group_object.group('value').replace("\n", " ") + '</ins>'
+
+        return replaceString
+
+
+    def highlightProcess(group_object):
+        replaceString = '<span class="critic comment">' + group_object.group('value').replace("\n", " ") + '</span>'
+        return replaceString
+
+
+    def markProcess(group_object):
+        replaceString = '<mark>' + group_object.group('value') + '</mark><span class="critic comment">' + group_object.group('comment').replace("\n", " ") + '</span>'
+        return replaceString
+
+
+    add_pattern = r'''(?s)\{\+\+(?P<value>.*?)\+\+[ \t]*(\[(?P<meta>.*?)\])?[ \t]*\}'''
+
+    del_pattern = r'''(?s)\{\-\-(?P<value>.*?)\-\-[ \t]*(\[(?P<meta>.*?)\])?[ \t]*\}'''
+
+    comm_pattern = r'''(?s)\{\>\>(?P<value>.*?)\<\<\}'''
+
+    subs_pattern = r'''(?s)\{\~\~(?P<original>(?:[^\~\>]|(?:\~(?!\>)))+)\~\>(?P<new>(?:[^\~\~]|(?:\~(?!\~\})))+)\~\~\}'''
+
+    mark_pattern = r'''(?s)\{\=\=(?P<value>.*?)\=\=\}\{\>\>(?P<comment>.*?)\<\<\}'''
+
+    body = re.sub(del_pattern, deletionProcess, body, flags=re.DOTALL)
+
+    body = re.sub(add_pattern, additionProcess, body, flags=re.DOTALL)
+
+    body = re.sub(mark_pattern, markProcess, body, flags=re.DOTALL)
 
     # comment processing must come after highlights
-    body = re.sub(COMM_PATTERN, highlightProcess, body, flags=re.DOTALL)
+    body = re.sub(comm_pattern, highlightProcess, body, flags=re.DOTALL)
 
-    return re.sub(SUBS_PATTERN, subsProcess, body, flags=re.DOTALL)
+    return re.sub(subs_pattern, subsProcess, body, flags=re.DOTALL)
 
 
 def markdown_filter(body, engine):
