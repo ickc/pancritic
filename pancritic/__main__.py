@@ -4,10 +4,10 @@ import argparse
 import os
 import sys
 
-from pancritic.filters import criticmarkup_accept_filter, criticmarkup_reject_filter, criticmarkup_tex_diff_filter, criticmarkup_html_diff_filter, markdown_filter, tex_filter, html_filter
+from pancritic.filters import criticmarkup_accept_filter, criticmarkup_reject_filter, criticmarkup_tex_diff_filter, criticmarkup_html_diff_filter, markdown_filter, pandoc_filter, html_filter
 
 
-def output_to_format(output):
+def IO_to_format(output):
     ext = os.path.splitext(output.name)[1][1:]
     if ext == 'md':
         return 'markdown'
@@ -22,10 +22,11 @@ def main(args):
 
     # diff/markup mode
     if args.critic_mode[0] in ('d', 'm'):
-        if args.to in ('markdown', 'html'):
-            body = criticmarkup_html_diff_filter(body)
-        elif args.to == 'latex':
+        if args.to == 'latex':
             body = criticmarkup_tex_diff_filter(body)
+        # for any other format, use HTML (many formats support inline HTML)
+        else:
+            body = criticmarkup_html_diff_filter(body)
     # accept mode
     elif args.critic_mode[0] == 'a':
         body = criticmarkup_accept_filter(body)
@@ -36,12 +37,15 @@ def main(args):
         print('Unknown critic mode {}.'.format(args.critic_mode), file=sys.stderr)
 
     # only convert markdown to html or tex if the output extension is really that format
-    if output_to_format(args.output) == 'html':
-        body = markdown_filter(body, args.engine)
-    elif output_to_format(args.output) == 'latex':
-        body = tex_filter(body, args.engine, args.standalone)
+    output_format = IO_to_format(args.output)
+    if output_format != args.from_format:
+        if args.from_format == 'markdown' and output_format == 'html':
+            body = markdown_filter(body, args.engine)
+        else:
+            body = pandoc_filter(body, args.from_format, output_format, args.standalone, args.engine)
 
-    if args.to in ('markdown', 'html'):
+    if args.to != 'latex':
+        # for any other format, use HTML (many formats support inline HTML)
         body = html_filter(body, args.critic_template, args.critic_mode[0], args.standalone)
 
     args.output.write(body)
@@ -53,11 +57,14 @@ def get_args():
 
     parser.add_argument('input', type=argparse.FileType('r'), default=sys.stdin,
                         help='Input file. Default: stdin.')
+    # TODO: handle binary output through pypandoc: ("odt", "docx", "epub", "epub3", "pdf")
     parser.add_argument('-o', '--output', type=argparse.FileType('w'), default=sys.stdout,
                         help='Output file. Default: stdout.')
 
     parser.add_argument('-t', '--to',
-                        help='Output format. Default: inferred from --output. Valid: markdown, html, latex.')
+                        help='Output format. Default: inferred from --output.')
+    parser.add_argument('-f', '--from', dest='from_format',
+                        help='Input format. Default: inferred from --input.')
     parser.add_argument('-s', '--standalone', action='store_true',
                         help='Output standalone html, only useful when output to html.')
 
@@ -74,7 +81,9 @@ def get_args():
     args = parser.parse_args()
 
     if not args.to:
-        args.to = output_to_format(args.output)
+        args.to = IO_to_format(args.output)
+    if not args.from_format:
+        args.from_format = IO_to_format(args.input)
     return args
 
 

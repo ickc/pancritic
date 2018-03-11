@@ -110,6 +110,8 @@ def criticmarkup_html_diff_filter(body):
 
 
 def markdown_filter(body, engine):
+    '''refactor to use pandoc_filter?
+    '''
     def fallback():
         print('Cannot use {}, use markdown instead.'.format(engine), file=sys.stderr)
 
@@ -141,19 +143,19 @@ def markdown_filter(body, engine):
     return markdown(body, extensions=['extra', 'codehilite', 'meta'])
 
 
-def tex_filter(body, engine, standalone):
+def pandoc_filter(body, input_format, output_format, standalone, engine):
     extra_args = ['-s'] if standalone else None
 
     if engine == 'panflute':
         try:
             from panflute import convert_text
-            return convert_text(body, output_format='latex', extra_args=extra_args)
+            return convert_text(body, input_format=input_format, output_format=output_format, extra_args=extra_args)
         except:
             print('Cannot use {}, use pypandoc instead.'.format(engine), file=sys.stderr)
 
     try:
         from pypandoc import convert_text
-        return convert_text(body, 'latex', format='markdown', extra_args=extra_args)
+        return convert_text(body, output_format, input_format, extra_args=extra_args)
     except:
         print('Cannot use {}, stop converting to tex and output markdown instead.'.format(engine), file=sys.stderr)
 
