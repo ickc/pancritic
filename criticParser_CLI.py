@@ -32,9 +32,7 @@ SUBS_PATTERN = r'''(?s)\{\~\~(?P<original>(?:[^\~\>]|(?:\~(?!\>)))+)\~\>(?P<new>
 
 MARK_PATTERN = r'''(?s)\{\=\=(?P<value>.*?)\=\=\}\{\>\>(?P<comment>.*?)\<\<\}'''
 
-CSS = '''
-
-<style>
+CSS = '''<style>
 	#wrapper {
 		padding-top: 30px !important;
 	}
@@ -83,7 +81,6 @@ CSS = '''
 	}
 
 	.original del {
-		
 			text-decoration: none;
 	}	
 
@@ -94,7 +91,6 @@ CSS = '''
 	}
 
 	.edited ins {
-		
 			text-decoration: none;
 	}	
 
@@ -156,18 +152,16 @@ CSS = '''
 	    padding: 0.5em 1em;
 	    border-radius: 0.5em;
 	}
-}
 
 </style>
 
-<div id="criticnav">
-	<ul>
-		<li id="markup-button">Markup</li>
-		<li id="original-button">Original</li>
-		<li id="edited-button">Edited</li>
-	</ul>
+<div id="criticnav"><ul>
+	<li id="markup-button">Markup</li>
+	<li id="original-button">Original</li>
+	<li id="edited-button">Edited</li>
+</ul></div>
 
-</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 <script type="text/javascript">
 
@@ -224,11 +218,6 @@ CSS = '''
 </script>
 '''
 
-HEAD_JQ = '''<!DOCTYPE html>
-<html>
-<head><script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<title>Critic Markup Output</title>'''
-
 HEAD = '''<!DOCTYPE html>
 <html>
 <head>
@@ -236,7 +225,7 @@ HEAD = '''<!DOCTYPE html>
 
 BODY_BEGIN = '''</head><body><div id="wrapper">'''
 
-HEAD_END = '''</div></body></html>'''
+BODY_END = '''</div></body></html>'''
 
 
 def deletionProcess(group_object):
@@ -305,72 +294,82 @@ def criticmarkup_filter(h):
     return re.sub(SUBS_PATTERN, subsProcess, h, flags=re.DOTALL)
 
 
-def markdown_filter(h, m2=False):
-    if m2:
+def markdown_filter(h, engine):
+    def fallback():
+        print('Cannot use {}, use markdown instead.'.format(engine), file=sys.stderr)
+
+    print('Using the {} module for processing'.format(engine))
+
+    if engine == 'markdown2':
         try:
-            import markdown2
-            print('Using the Markdown2 module for processing')
-            return markdown2.markdown(h, extras=['footnotes', 'fenced-code-blocks', 'cuddled-lists', 'code-friendly'])
+            from markdown2 import markdown
+            return markdown(h, extras=['footnotes', 'fenced-code-blocks', 'cuddled-lists', 'code-friendly'])
         except ImportError:
-            print('Cannot import markdown2, use markdown instead.', file=sys.stderr)
+            fallback()
 
-    import markdown
-    return markdown.markdown(h, extensions=['extra', 'codehilite', 'meta'])
+    elif engine == 'panflute':
+        try:
+            from panflute import convert_text
+            return convert_text(h, output_format='html')
+        except:
+            fallback()
+
+    elif engine == 'pypandoc':
+        try:
+            from pypandoc import convert_text
+            return convert_text(h, 'html', format='md')
+        except:
+            fallback()
+
+    elif engine != 'markdown':
+            fallback()
+
+    from markdown import markdown
+    return markdown(h, extensions=['extra', 'codehilite', 'meta'])
 
 
-def html_filter(h, head=HEAD_JQ, css=CSS):
-    return head + css + BODY_BEGIN + h + HEAD_END
+def html_filter(h, css, standalone=False):
+    if standalone:
+        return HEAD + css + BODY_BEGIN + h + BODY_END
+    else:
+        return css + '<div id="wrapper">\n\n' + h + '</div>'
 
 
 def main(args):
-    with open(args.source, "r") as inputFile:
-        h = inputFile.read()
+    h = args.input.read()
 
     h = criticmarkup_filter(h)
 
-    h = markdown_filter(h, m2=args.m2)
+    if args.to == 'html':
+        h = markdown_filter(h, args.html_engine)
+    h = html_filter(h, (css_file.read() if args.css else CSS), standalone=args.standalone)
 
-    h = html_filter(h, head=HEAD, css=css_file.read()) if args.css else html_filter(h)
-
-    # If an output file is specified, write to it
-    if args.output:
-        filesource = args.output
-        abs_path = os.path.abspath(filesource.name)
-        output_file = abs_path
-        print(output_file)
-        filesource.write(h)
-        filesource.close()
-        print("Output file created:  ", abs_path)
-    else:
-        path, filename = os.path.split(args.source)
-        print("Converting >> " + args.source)
-        output_file = path + '/' + filename.split(os.extsep, 1)[0] + '_CriticParseOut.html'
-        file = open(output_file, 'w')
-        file.write(h.encode('utf-8'))
-        file.close()
-        print("Output file created:  " + output_file)
-
-    if (args.browser):
-        try:
-            retcode = subprocess.call("open " + output_file, shell=True)
-            if retcode < 0:
-                print("Child was terminated by signal", -retcode, file=sys.stderr)
-            else:
-                print("Child returned", retcode, file=sys.stderr)
-        except OSError as e:
-            print("Execution failed:", e, file=sys.stderr)
+    args.output.write(h)
 
 
 def cli():
-    parser = argparse.ArgumentParser(description='Convert Critic Markup to HTML')
+    parser = argparse.ArgumentParser(description='Convert Critic Markup.')
 
-    parser.add_argument('source', help='The source file path, including file name')
-    parser.add_argument('-m2', help='Use the markdown2 python module. If left blank then markdown module is used', action='store_true')
-    parser.add_argument('-o', '--output', help='Path to store the output file, including file name', metavar='out-file', type=argparse.FileType('wt'))
-    parser.add_argument('-css', '--css', help='Path to a custom CSS file, including file name', metavar='in-file', type=argparse.FileType('rt'))
-    parser.add_argument('-b', '--browser', help='View the output file in the default browser after saving.', action='store_true')
+    parser.add_argument('input', type=argparse.FileType('r'), default=sys.stdin,
+                        help='Input file. Default: stdin')
+    parser.add_argument('-o', '--output', type=argparse.FileType('w'), default=sys.stdout,
+                        help='Output file. Default: sys.stdout')
+    parser.add_argument('-c', '--css', type=argparse.FileType('r'),
+                        help='Custom CSS file. If not specified, default CSS is used, where minimal javascript is embedded.')
 
-    return parser.parse_args()
+    parser.add_argument('-t', '--to',
+                        help='Output format. Default: inferred from --output. Valid: md, html.')
+    parser.add_argument('-s', '--standalone', action='store_true',
+                        help='Output standalone html, only useful when output to html.')
+    parser.add_argument('--html-engine', default='markdown',
+                        help='If specified, convert markdown to HTML using the specified engine. Default: markdown. Valid: markdown, markdown2, panflute, pypandoc.')
+
+    args = parser.parse_args()
+
+    if not args.to:
+        args.to = os.path.splitext(args.output.name)[1][1:]
+
+    return args
 
 
 if __name__ == "__main__":
