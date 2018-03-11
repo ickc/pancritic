@@ -120,14 +120,16 @@ CSS = '''<style>
 	}
 
 </style>
+'''
 
-<div id="criticnav"><ul>
+NAV = '''<div id="criticnav"><ul>
 	<li id="markup-button">Markup</li>
 	<li id="original-button">Original</li>
 	<li id="edited-button">Edited</li>
 </ul></div>
+'''
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+JS='''<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 <script type="text/javascript">
 
@@ -183,12 +185,3 @@ CSS = '''<style>
 
 </script>
 '''
-
-HEAD = '''<!DOCTYPE html>
-<html>
-<head>
-<title>Critic Markup Output</title>'''
-
-BODY_BEGIN = '''</head><body><div id="wrapper">'''
-
-BODY_END = '''</div></body></html>'''

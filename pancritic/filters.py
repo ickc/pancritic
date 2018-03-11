@@ -3,7 +3,7 @@ from __future__ import print_function
 import re
 import sys
 
-from pancritic.template import HEAD, BODY_BEGIN, BODY_END
+from pancritic.template import CSS, NAV, JS
 
 ADD_EDIT = re.compile(r'(?s)\{\+\+(.*?)\+\+[ \t]*(\[(.*?)\])?[ \t]*\}')
 DEL_EDIT = re.compile(r'(?s)\{\-\-(.*?)\-\-[ \t]*(\[(.*?)\])?[ \t]*\}')
@@ -160,8 +160,25 @@ def tex_filter(body, engine, standalone):
     return body
 
 
-def html_filter(body, css, standalone=False):
-    if standalone:
-        return HEAD + css + BODY_BEGIN + body + BODY_END
+def html_filter(body, template, mode, standalone):
+
+    def enclose(body, value, id=None):
+        return ['<{} id="{}">'.format(value, id)] + body + ['</{}>'.format(value)] if id else ['<{}>'.format(value)] + body + ['</{}>'.format(value)]
+
+    # convert to lists
+    body = [body]
+
+    if template:
+        head = [template.read()]
+    elif mode == 'm':
+        head = [CSS, JS]
+    elif mode == 'd':
+        head = [CSS, NAV, JS]
     else:
-        return css + '<div id="wrapper">\n\n' + body + '\n\n</div>\n'
+        head = []
+
+    body = ['<!DOCTYPE html>'] + enclose(enclose(head, 'head') + enclose(enclose(body, 'div', id='wrapper'), 'body'), 'html') \
+        if standalone else \
+        head + enclose(body, 'div', id='wrapper')
+
+    return '\n\n'.join(body)

@@ -20,8 +20,8 @@ def output_to_format(output):
 def main(args):
     body = args.input.read()
 
-    # diff mode
-    if args.critic_mode[0] == 'd':
+    # diff/markup mode
+    if args.critic_mode[0] in ('d', 'm'):
         if args.to in ('markdown', 'html'):
             body = criticmarkup_html_diff_filter(body)
         elif args.to == 'latex':
@@ -42,13 +42,7 @@ def main(args):
         body = tex_filter(body, args.engine, args.standalone)
 
     if args.to in ('markdown', 'html'):
-        if args.css:
-            css = css_file.read()
-        elif args.critic_mode[0] == 'a' or args.critic_mode[0] == 'r':
-            css = ''
-        else:
-            css = CSS
-        body = html_filter(body, css, standalone=args.standalone)
+        body = html_filter(body, args.critic_template, args.critic_mode[0], args.standalone)
 
     args.output.write(body)
 
@@ -61,18 +55,21 @@ def get_args():
                         help='Input file. Default: stdin.')
     parser.add_argument('-o', '--output', type=argparse.FileType('w'), default=sys.stdout,
                         help='Output file. Default: stdout.')
-    parser.add_argument('-c', '--css', type=argparse.FileType('r'),
-                        help='Custom CSS file. If not specified, default CSS is used, where minimal javascript is embedded.')
 
     parser.add_argument('-t', '--to',
                         help='Output format. Default: inferred from --output. Valid: markdown, html, latex.')
     parser.add_argument('-s', '--standalone', action='store_true',
                         help='Output standalone html, only useful when output to html.')
+
+    parser.add_argument('--critic-template', type=argparse.FileType('r'),
+                        help='Custom template of CSS and JS for CriticMarkup in diff mode.')
+    # parser.add_argument('--print-default-critic-template', type=argparse.FileType('w'), default=sys.stdout,
+    #                     help='Custom template of CSS and JS for CriticMarkup in diff mode.')
     parser.add_argument('--engine', default='markdown',
                         help='If specified, convert markdown to HTML using the specified engine. Default: markdown. Valid: markdown, markdown2, panflute, pypandoc.')
 
     parser.add_argument('-m', '--critic-mode', default='diff',
-                        help='Specify critic mode. Default: diff. Valid: a/accept, r/reject, d/diff.')
+                        help='Specify critic mode. Default: diff. Valid: a/accept, r/reject, d/diff, m/markup.')
 
     args = parser.parse_args()
 
