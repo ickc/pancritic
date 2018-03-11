@@ -211,6 +211,7 @@ SUB_EDIT = re.compile(r'''(?s)\{\~\~(?P<original>(?:[^\~\>]|(?:\~(?!\>)))+)\~\>(
 
 # filters
 
+
 def criticmarkup_accept_filter(body):
     body = ADD_EDIT.sub(r'\1', body)
     body = DEL_EDIT.sub(r'', body)
@@ -248,13 +249,11 @@ def criticmarkup_html_diff_filter(body):
             replaceString = '<del>' + group_object.group('value').replace("\n\n", "&nbsp;") + '</del>'
         return replaceString
 
-
     def subsProcess(group_object):
         delString = '<del>' + group_object.group('original') + '</del>'
         insString = '<ins>' + group_object.group('new') + '</ins>'
         newString = delString + insString
         return newString
-
 
     # Converts Addition markup to HTML
     def additionProcess(group_object):
@@ -280,16 +279,13 @@ def criticmarkup_html_diff_filter(body):
 
         return replaceString
 
-
     def highlightProcess(group_object):
         replaceString = '<span class="critic comment">' + group_object.group('value').replace("\n", " ") + '</span>'
         return replaceString
 
-
     def markProcess(group_object):
         replaceString = '<mark>' + group_object.group('value') + '</mark><span class="critic comment">' + group_object.group('comment').replace("\n", " ") + '</span>'
         return replaceString
-
 
     add_pattern = r'''(?s)\{\+\+(?P<value>.*?)\+\+[ \t]*(\[(?P<meta>.*?)\])?[ \t]*\}'''
 
@@ -339,7 +335,7 @@ def markdown_filter(body, engine):
             fallback()
 
     elif engine != 'markdown':
-            fallback()
+        fallback()
 
     from markdown import markdown
     return markdown(body, extensions=['extra', 'codehilite', 'meta'])
@@ -371,6 +367,7 @@ def html_filter(body, css, standalone=False):
         return css + '<div id="wrapper">\n\n' + body + '\n\n</div>\n'
 
 # helper
+
 
 def output_to_format(output):
     ext = os.path.splitext(output.name)[1][1:]
