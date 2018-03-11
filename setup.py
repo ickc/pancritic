@@ -100,7 +100,7 @@ setup(
     # $ pip install -e .[dev,test]
     extras_require={
         'dev': ['check-manifest'],
-        'test': ['pep8', 'pytest', 'pytest-cov', 'coverage', 'coveralls', 'panflute', 'pypandoc'],
+        'test': ['requests', 'pep8', 'pytest', 'pytest-cov', 'coverage', 'coveralls', 'panflute', 'pypandoc'],
     },
 
     # If there are data files included in your packages that need to be
