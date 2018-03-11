@@ -281,20 +281,20 @@ def markProcess(group_object):
 # filters
 
 
-def criticmarkup_filter(h):
-    h = re.sub(DEL_PATTERN, deletionProcess, h, flags=re.DOTALL)
+def criticmarkup_filter(body):
+    body = re.sub(DEL_PATTERN, deletionProcess, body, flags=re.DOTALL)
 
-    h = re.sub(ADD_PATTERN, additionProcess, h, flags=re.DOTALL)
+    body = re.sub(ADD_PATTERN, additionProcess, body, flags=re.DOTALL)
 
-    h = re.sub(MARK_PATTERN, markProcess, h, flags=re.DOTALL)
+    body = re.sub(MARK_PATTERN, markProcess, body, flags=re.DOTALL)
 
     # comment processing must come after highlights
-    h = re.sub(COMM_PATTERN, highlightProcess, h, flags=re.DOTALL)
+    body = re.sub(COMM_PATTERN, highlightProcess, body, flags=re.DOTALL)
 
-    return re.sub(SUBS_PATTERN, subsProcess, h, flags=re.DOTALL)
+    return re.sub(SUBS_PATTERN, subsProcess, body, flags=re.DOTALL)
 
 
-def markdown_filter(h, engine):
+def markdown_filter(body, engine):
     def fallback():
         print('Cannot use {}, use markdown instead.'.format(engine), file=sys.stderr)
 
@@ -303,21 +303,21 @@ def markdown_filter(h, engine):
     if engine == 'markdown2':
         try:
             from markdown2 import markdown
-            return markdown(h, extras=['footnotes', 'fenced-code-blocks', 'cuddled-lists', 'code-friendly'])
+            return markdown(body, extras=['footnotes', 'fenced-code-blocks', 'cuddled-lists', 'code-friendly'])
         except ImportError:
             fallback()
 
     elif engine == 'panflute':
         try:
             from panflute import convert_text
-            return convert_text(h, output_format='html')
+            return convert_text(body, output_format='html')
         except:
             fallback()
 
     elif engine == 'pypandoc':
         try:
             from pypandoc import convert_text
-            return convert_text(h, 'html', format='md')
+            return convert_text(body, 'html', format='md')
         except:
             fallback()
 
@@ -325,26 +325,27 @@ def markdown_filter(h, engine):
             fallback()
 
     from markdown import markdown
-    return markdown(h, extensions=['extra', 'codehilite', 'meta'])
+    return markdown(body, extensions=['extra', 'codehilite', 'meta'])
 
 
-def html_filter(h, css, standalone=False):
+def html_filter(body, css, standalone=False):
     if standalone:
-        return HEAD + css + BODY_BEGIN + h + BODY_END
+        return HEAD + css + BODY_BEGIN + body + BODY_END
     else:
-        return css + '<div id="wrapper">\n\n' + h + '</div>'
+        return css + '<div id="wrapper">\n\n' + body + '\n\n</div>\n'
 
 
 def main(args):
-    h = args.input.read()
+    body = args.input.read()
 
-    h = criticmarkup_filter(h)
+    body = criticmarkup_filter(body)
 
     if args.to == 'html':
-        h = markdown_filter(h, args.html_engine)
-    h = html_filter(h, (css_file.read() if args.css else CSS), standalone=args.standalone)
+        body = markdown_filter(body, args.html_engine)
 
-    args.output.write(h)
+    body = html_filter(body, (css_file.read() if args.css else CSS), standalone=args.standalone)
+
+    args.output.write(body)
 
 
 def cli():
