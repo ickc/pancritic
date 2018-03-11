@@ -16,4 +16,4 @@ if len(selected_string) > 0:
     s = sub_edit.sub(r'\2', d)
     print s
 else:
-	print selected_string
+    print selected_string
