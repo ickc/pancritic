@@ -118,15 +118,33 @@ def criticmarkup_html_diff_filter(body):
 
 
 def markdown_filter(body, engine):
-    if engine == 'markdown2':
-        try:
-            from markdown2 import markdown
-            return markdown(body, extras=['footnotes', 'fenced-code-blocks', 'cuddled-lists', 'code-friendly'])
-        except ImportError:
-            print('Cannot use markdown2, use markdown instead.', file=sys.stderr)
 
-    from markdown import markdown
-    return markdown(body, extensions=['extra', 'codehilite', 'meta'])
+    def _markdown2_filter(body):
+        from markdown2 import markdown
+        return markdown(body, extras=['footnotes', 'fenced-code-blocks', 'cuddled-lists', 'code-friendly'])
+
+    def _markdown_filter(body):
+        from markdown import markdown
+        return markdown(body, extensions=['extra', 'codehilite', 'meta'])
+
+    engines = ('markdown2', 'markdown') if engine == 'markdown2' else ('markdown', 'markdown2')
+    engine_function = {
+        'markdown': _markdown_filter,
+        'markdown2': _markdown2_filter
+    }
+
+    for i, engine in enumerate(engines):
+        try:
+            # i != 0 means failing last time
+            if i != 0:
+                print('Use {} instead.'.format(engine), file=sys.stderr)
+            return engine_function[engine](body)
+        except:
+            print('Cannot use {}.'.format(engine), file=sys.stderr)
+
+    print('Stop converting and output original format instead.', file=sys.stderr)
+
+    return body
 
 
 def pandoc_filter(body, input_format, output_format, standalone, engine, outputfile=None):
