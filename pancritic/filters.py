@@ -83,8 +83,12 @@ def criticmarkup_html_diff_filter(body):
         replaceString = '<span class="critic comment">' + group_object.group('value').replace("\n", " ") + '</span>'
         return replaceString
 
-    def markProcess(group_object):
+    def markCommProcess(group_object):
         replaceString = '<mark>' + group_object.group('value') + '</mark><span class="critic comment">' + group_object.group('comment').replace("\n", " ") + '</span>'
+        return replaceString
+
+    def markProcess(group_object):
+        replaceString = '<mark>' + group_object.group('value') + '</mark>'
         return replaceString
 
     add_pattern = r'''(?s)\{\+\+(?P<value>.*?)\+\+[ \t]*(\[(?P<meta>.*?)\])?[ \t]*\}'''
@@ -95,11 +99,15 @@ def criticmarkup_html_diff_filter(body):
 
     subs_pattern = r'''(?s)\{\~\~(?P<original>(?:[^\~\>]|(?:\~(?!\>)))+)\~\>(?P<new>(?:[^\~\~]|(?:\~(?!\~\})))+)\~\~\}'''
 
-    mark_pattern = r'''(?s)\{\=\=(?P<value>.*?)\=\=\}\{\>\>(?P<comment>.*?)\<\<\}'''
+    mark_comm_pattern = r'''(?s)\{\=\=(?P<value>.*?)\=\=\}\{\>\>(?P<comment>.*?)\<\<\}'''
+
+    mark_pattern = r'''(?s)\{\=\=(?P<value>.*?)\=\=\}'''
 
     body = re.sub(del_pattern, deletionProcess, body, flags=re.DOTALL)
 
     body = re.sub(add_pattern, additionProcess, body, flags=re.DOTALL)
+
+    body = re.sub(mark_comm_pattern, markCommProcess, body, flags=re.DOTALL)
 
     body = re.sub(mark_pattern, markProcess, body, flags=re.DOTALL)
 
