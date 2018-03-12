@@ -36,7 +36,7 @@ pandocArgePub := $(pandocArgHTML) -t $(ePubVersion) --epub-chapter-level=2
 pandocArgReadmeGitHub := $(pandocArgFragment) --toc-depth=2 -s -t gfm --reference-location=block
 pandocArgReadmePypi := $(pandocArgFragment) -s -t rst --reference-location=block -f markdown+autolink_bare_uris-fancy_lists-implicit_header_references
 
-testAll = tests/test-1.html tests/test-2.tex tests/test-3.tex tests/test-4.html tests/test-5.md tests/test-6.html
+testAll = tests/test-1.html tests/test-2.tex tests/test-3.tex tests/test-4.html tests/test-5.md tests/test-6.html tests/test-7.html tests/test-8.html
 docs := $(wildcard docs/*.md)
 # docsHtml := $(patsubst %.md,%.html,$(docs))
 docsPdf := $(patsubst %.md,%.pdf,$(docs))
@@ -48,24 +48,38 @@ all: $(testAll) $(docsAll)
 docs: $(docsAll)
 readme: docs
 
-tests/test-1.html: tests-ref/test.md tests
-	coverage run -p --branch -m pancritic $< -o $@ -m m
-tests/test-2.tex: tests-ref/test.md tests
-	coverage run -p --branch -m pancritic $< -o $@ --engine pypandoc
-tests/test-3.tex: tests-ref/test.md tests
-	coverage run -p --branch -m pancritic $< -o $@ --engine panflute
-tests/test-4.html: tests-ref/test.md tests
-	coverage run -p --branch -m pancritic $< -o $@ -s --critic-template <(echo '<div>nothing</div>')
 tests/test-5.md: tests-ref/test.md tests
 	coverage run -p --branch -m pancritic $< -o $@ -m a
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
+tests/test-8.html: tests-ref/test.md tests
+	coverage run -p --branch -m pancritic $< -t markdown --engine pypandoc -m m | pandoc -s -o $@
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
+tests/test-7.html: tests-ref/test.md tests
+	coverage run -p --branch -m pancritic $< -o $@ -s
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
+tests/test-1.html: tests-ref/test.md tests
+	coverage run -p --branch -m pancritic $< -o $@ -m m
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
+tests/test-4.html: tests-ref/test.md tests
+	coverage run -p --branch -m pancritic $< -o $@ -s --critic-template <(echo '<div>nothing</div>')
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
 tests/test-6.html: tests-ref/test.md tests
 	coverage run -p --branch -m pancritic $< -o $@ -m r --engine markdown2
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
+tests/test-2.tex: tests-ref/test.md tests
+	coverage run -p --branch -m pancritic $< -o $@ --engine pypandoc
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
+tests/test-3.tex: tests-ref/test.md tests
+	coverage run -p --branch -m pancritic $< -o $@ --engine panflute
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
 
 tests:
 	mkdir -p $@
 
 test: $(testAll) # pep8
 	coverage combine -a .coverage*
+
+coverage: test
 	coverage html
 
 clean:
