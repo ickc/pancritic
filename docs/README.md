@@ -80,7 +80,7 @@ A somewhat surprising behavior is when the to-format and output extension is dif
 An interesting use of this is to use pancritic as a pandoc preprocessor instead, like this
 
 ```bash
-coverage run -p --branch -m pancritic input.md -t markdown -m m | pandoc -s -o output.html
+pancritic input.md -t markdown -m m | pandoc -s -o output.html
 ```
 
 This will be useful if more advanced pandoc args are needed.
