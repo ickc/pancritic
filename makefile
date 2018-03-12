@@ -62,7 +62,7 @@ tests/test-5.md: tests.md tests
 	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
 tests/test-8.html: tests.md tests
 	$(pancritic) $< -t markdown --engine pypandoc -m m | pandoc -s -o $@
-	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit $(ERRORCODE); fi
 tests/test-7.html: tests.md tests
 	$(pancritic) $< -o $@ -s
 	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
