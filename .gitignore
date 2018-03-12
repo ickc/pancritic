@@ -20,4 +20,4 @@ tests/
 *.fls
 *.log
 *.out
-docs/example.tex
+docs/tests.tex
