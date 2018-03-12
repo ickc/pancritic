@@ -90,11 +90,11 @@ coverage: test
 	coverage html
 
 clean:
-	rm -f .coverage $(testAll) README.html
+	rm -f .coverage* $(testAll) README.html
 	rm -rf htmlcov pancritic.egg-info
 	find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
 Clean:
-	rm -f .coverage $(testAll) $(docsAll)
+	rm -f .coverage* $(testAll) $(docsAll)
 	rm -rf htmlcov pancritic.egg-info
 	find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
 
