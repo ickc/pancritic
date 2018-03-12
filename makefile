@@ -58,28 +58,28 @@ docs/example.pdf: tests-ref/test.md
 tests/test-5.md: tests-ref/test.md tests
 	cp $< $@
 	coverage run -p --branch -m pancritic $@ -i -m a
-	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
 tests/test-8.html: tests-ref/test.md tests
 	coverage run -p --branch -m pancritic $< -t markdown --engine pypandoc -m m | pandoc -s -o $@
-	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
 tests/test-7.html: tests-ref/test.md tests
 	coverage run -p --branch -m pancritic $< -o $@ -s
-	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
 tests/test-1.html: tests-ref/test.md tests
 	coverage run -p --branch -m pancritic $< -o $@ -m m
-	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
 tests/test-4.html: tests-ref/test.md tests
 	coverage run -p --branch -m pancritic $< -o $@ -s --critic-template <(echo '<div>nothing</div>')
-	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
 tests/test-6.html: tests-ref/test.md tests
 	coverage run -p --branch -m pancritic $< -o $@ -m r --engine markdown2
-	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
 tests/test-2.tex: tests-ref/test.md tests
 	coverage run -p --branch -m pancritic $< -o $@ --engine pypandoc
-	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
 tests/test-3.tex: tests-ref/test.md tests
 	coverage run -p --branch -m pancritic $< -o $@ --engine panflute
-	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then exit 1; fi
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
 # expect pancritic to override to use pypandoc
 tests/test-9.pdf: tests-ref/test.md tests
 	cat $< | coverage run -p --branch -m pancritic - -o $@ --engine panflute
