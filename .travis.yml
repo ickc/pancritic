@@ -62,8 +62,8 @@ install:
     wget $downloadUrl &&
     sudo dpkg -i ${downloadUrl##*/}
 # command to run tests
-# script:
-#   - make -j4 test
+script:
+  - make -j4 test
 after_success:
   - if [[ "$pandocVersion" == "latest" && "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then coveralls; else printf "skip coveralls"; fi
 deploy:
