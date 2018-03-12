@@ -1,5 +1,7 @@
 SHELL := /usr/bin/env bash
 
+ERRORCODE = 1
+
 # configure engine
 python := python
 pip := pip
@@ -76,10 +78,10 @@ tests/test-6.html: tests-ref/test.md tests
 	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
 tests/test-2.tex: tests-ref/test.md tests
 	coverage run -p --branch -m pancritic $< -o $@ --engine pypandoc
-	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit $(ERRORCODE); fi
 tests/test-3.tex: tests-ref/test.md tests
 	coverage run -p --branch -m pancritic $< -o $@ --engine panflute
-	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
+	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit $(ERRORCODE); fi
 # expect pancritic to override to use pypandoc
 tests/test-9.pdf: tests-ref/test.md tests
 	cat $< | coverage run -p --branch -m pancritic - -o $@ --engine panflute
