@@ -15,8 +15,7 @@ HTMLVersion := html5
 ## ePub
 ePubVersion := epub
 
-pancritic := pancritic
-pancritic2csv := pancritic2csv
+pancritic := coverage run -p --branch -m pancritic
 
 CSSURL:=https://cdn.jsdelivr.net/gh/ickc/markdown-latex-css
 
@@ -42,7 +41,7 @@ testAll = tests/test-1.html tests/test-2.tex tests/test-3.tex tests/test-4.html 
 docs := $(wildcard docs/*.md)
 # docsHtml := $(patsubst %.md,%.html,$(docs))
 docsPdf := $(patsubst %.md,%.pdf,$(docs))
-docsAll := $(docsPdf) docs/index.html README.md README.rst README.html docs/example.html docs/example.pdf
+docsAll := $(docsPdf) docs/index.html README.md README.rst README.html docs/tests.html docs/tests.pdf
 
 # Main Targets ########################################################################################################################################################################################
 
@@ -50,41 +49,41 @@ all: $(testAll) $(docsAll)
 docs: $(docsAll)
 readme: docs
 
-docs/example.html: tests-ref/test.md
-	pancritic $< -o $@ -s --engine panflute
-docs/example.pdf: tests-ref/test.md
-		pancritic $< -o docs/example.tex -s --engine panflute -m m
-		latexmk -pdf docs/example.tex
-		mv example.pdf $@
+docs/tests.html: tests.md
+	$(pancritic) $< -o $@ -s --engine panflute
+docs/tests.pdf: tests.md
+		$(pancritic) $< -o docs/tests.tex -s --engine panflute -m m
+		latexmk -pdf docs/tests.tex
+		mv tests.pdf $@
 
-tests/test-5.md: tests-ref/test.md tests
+tests/test-5.md: tests.md tests
 	cp $< $@
-	coverage run -p --branch -m pancritic $@ -i -m a
+	$(pancritic) $@ -i -m a
 	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
-tests/test-8.html: tests-ref/test.md tests
-	coverage run -p --branch -m pancritic $< -t markdown --engine pypandoc -m m | pandoc -s -o $@
+tests/test-8.html: tests.md tests
+	$(pancritic) $< -t markdown --engine pypandoc -m m | pandoc -s -o $@
 	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
-tests/test-7.html: tests-ref/test.md tests
-	coverage run -p --branch -m pancritic $< -o $@ -s
+tests/test-7.html: tests.md tests
+	$(pancritic) $< -o $@ -s
 	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
-tests/test-1.html: tests-ref/test.md tests
-	coverage run -p --branch -m pancritic $< -o $@ -m m
+tests/test-1.html: tests.md tests
+	$(pancritic) $< -o $@ -m m
 	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
-tests/test-4.html: tests-ref/test.md tests
-	coverage run -p --branch -m pancritic $< -o $@ -s --critic-template <(echo '<div>nothing</div>')
+tests/test-4.html: tests.md tests
+	$(pancritic) $< -o $@ -s --critic-template <(echo '<div>nothing</div>')
 	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
-tests/test-6.html: tests-ref/test.md tests
-	coverage run -p --branch -m pancritic $< -o $@ -m r --engine markdown2
+tests/test-6.html: tests.md tests
+	$(pancritic) $< -o $@ -m r --engine markdown2
 	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit 1; fi
-tests/test-2.tex: tests-ref/test.md tests
-	coverage run -p --branch -m pancritic $< -o $@ --engine pypandoc
+tests/test-2.tex: tests.md tests
+	$(pancritic) $< -o $@ --engine pypandoc
 	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit $(ERRORCODE); fi
-tests/test-3.tex: tests-ref/test.md tests
-	coverage run -p --branch -m pancritic $< -o $@ --engine panflute
+tests/test-3.tex: tests.md tests
+	$(pancritic) $< -o $@ --engine panflute
 	if [[ -n $$(diff -q $@ $(subst tests,tests-ref,$@)) ]]; then cat $@; exit $(ERRORCODE); fi
 # expect pancritic to override to use pypandoc
-tests/test-9.pdf: tests-ref/test.md tests
-	cat $< | coverage run -p --branch -m pancritic - -o $@ --engine panflute
+tests/test-9.pdf: tests.md tests
+	cat $< | $(pancritic) - -o $@ --engine panflute
 
 tests:
 	mkdir -p $@
