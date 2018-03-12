@@ -20,9 +20,9 @@ pre-processor.
 Definition of CriticMarkup
 ==========================
 
--  Deletions: This is {–is –}a test.
+-  Deletions: This is {--is --}a test.
 -  Additions: This {++is ++}a test.
--  Substitutions: This {~:sub:`isn’t`>is~~} a test.
+-  Substitutions: This {~~isn't~>is~~} a test.
 -  Highlighting: This is a {==test==}.
 -  Comments: This is a test{>>What is a test for?<<}.
 
