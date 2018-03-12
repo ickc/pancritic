@@ -15,7 +15,7 @@ HTMLVersion := html5
 ## ePub
 ePubVersion := epub
 
-pancritic := coverage run -p --branch -m pancritic
+pancritic := coverage run --source pancritic -p --branch -m pancritic
 
 CSSURL:=https://cdn.jsdelivr.net/gh/ickc/markdown-latex-css
 
