@@ -10,3 +10,4 @@ Cum sociis natoque {--penatibus et magnis--}{>>FTP - 2013-05-13 08:20:18<<} dis 
 2. {--This was a *deletion*.--}
 3. This {~~*was*~>*is*~~} a substitution.
 4. This is a {==*highlight*==}{>> With a *comment* that should not appear.<<}.
+5. This is a {==*highlight*==} without comment.
