@@ -22,7 +22,7 @@ def main(args, body, output_format, is_binary):
     # parse CritiMarkup
     # diff/markup mode
     if args.critic_mode[0] in ('d', 'm'):
-        if args.to == 'latex':
+        if args.to in ('latex', 'pdf'):
             body = criticmarkup_tex_diff_filter(body)
         # for any other format, use HTML (many formats support inline HTML)
         else:
@@ -43,7 +43,7 @@ def main(args, body, output_format, is_binary):
         body = html_filter(body, args.critic_template, args.critic_mode[0], args.standalone)
     elif output_format != args.from_format:
         # as long as the final format will be latex, don't add html_filter
-        if args.to != 'latex':
+        if args.to not in ('latex', 'pdf'):
             # defer standalone to pandoc
             body = html_filter(body, args.critic_template, args.critic_mode[0], False)
         if is_binary:
@@ -74,7 +74,7 @@ def get_args():
     parser.add_argument('-s', '--standalone', action='store_true',
                         help='Output standalone html.')
 
-    parser.add_argument('-i', '--inplace',
+    parser.add_argument('-i', '--inplace', action='store_true',
                         help='Overwrite original file.')
 
     parser.add_argument('--critic-template', type=argparse.FileType('r'),
