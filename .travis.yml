@@ -77,3 +77,6 @@ deploy:
     tags: true
     python: "3.6"
     condition: $pandocVersion = latest
+env:
+  global:
+    secure: "ldequnb5RP6xFsgwo4AOun12RURGFqeInrY162AMS1tVg0Wkq8JF+wTC30B4UjUxbHKmo5uRlILUA1E7mttAcKlOgITkFbdE+bNj0PaxfArUj8lN5ynyZuWZyUx/9zmuvL+BrA2hmTBsbaEWticnArijwXMrzpB6gvcitGOI9rky3n7ry9WZfCtOcFXNsjW29N+gbJ/K3yN4NadAuLSBVmRerkKuHC2OuWSgrq/I4naerjTm3JC5HXNEunojNWEuhcSWEoZfHpFUjn9ttjggKmGBNJS/sQU8B2/a5X9RtTI4FL8nO/jizm29nJVXc330xxJzaKXX0dIGJCm5SbL7yUQU3rQ7UHqV6G7OM3lgt3rfP2ph6WycEI1wnn5SVfm5E4+5BYsx1ApLj19lhHhXGefie5sKrVrcz993iXoIiJoIAbhU974vjOMBh6YwQLqmHbdJS86HUTAuQfxrznGdnZbQ95m0gjfmFMZedEEFtSvtiaK80wSgIwqPPThSAzz3NoSE+uPAkoJdJlbQa1tPVrWJXHSmnmw9q66/dyQ3OXShDgnq7rQ9yLCtKrQpdOFxXmmyvTA/UKl329T+bfff38szZLHOs/Hkqa0TFbvYZvJnQ7Gz+6Z7y4zmeSOBMRirynqWbqQfG6l7LSH8c/5xLw11xriiFf9w8TJ8+Ebv71g="
