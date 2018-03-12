@@ -178,12 +178,12 @@ def html_filter(body, template, mode, standalone):
         head = []
 
     body = (
-        ['<!DOCTYPE html>'] + enclose(enclose(head, 'head') + enclose(enclose(body, 'div', id='wrapper'), 'body'), 'html') \
-        if head else \
+        ['<!DOCTYPE html>'] + enclose(enclose(head, 'head') + enclose(enclose(body, 'div', id='wrapper'), 'body'), 'html')
+        if head else
         ['<!DOCTYPE html>'] + enclose(enclose(body, 'body'), 'html')
     ) if standalone else (
-        head + enclose(body, 'div', id='wrapper') \
-        if head else \
+        head + enclose(body, 'div', id='wrapper')
+        if head else
         body
     )
 
