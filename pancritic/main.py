@@ -6,6 +6,8 @@ import sys
 
 from .filters import criticmarkup_accept_filter, criticmarkup_reject_filter, criticmarkup_tex_diff_filter, criticmarkup_html_diff_filter, markdown_filter, pandoc_filter, html_filter
 
+from .version import __version__
+
 
 def IO_to_format(output):
     ext = os.path.splitext(output.name)[1][1:]
@@ -77,6 +79,9 @@ def get_args():
 
     parser.add_argument('-m', '--critic-mode', default='diff',
                         help='Specify critic mode. Default: diff. Valid: a/accept, r/reject, d/diff, m/markup.')
+
+    parser.add_argument('-v', '--version', action='version',
+                        version='%(prog)s {}'.format(__version__))
 
     args = parser.parse_args()
 
