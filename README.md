@@ -50,7 +50,7 @@ A typical use of pancritic will be like
 pancritic -s -o index.html index.md
 ```
 
-See examples in [HTML](example.html) and [PDF](example.pdf).
+See examples in [HTML](tests.html) and [PDF](tests.pdf).
 
 ## pancritic specific options
 
@@ -160,6 +160,6 @@ Translation from CriticMarkup to LaTeX.
 
   - Heavily modified from [CriticMarkup Toolkit’s
     criticParser\_CLI.py](http://criticmarkup.com/services.php)
-  - [test.md](test.md) is modified from [MMD-Test-Suite/Critic.text at
+  - [tests.md](tests.md) is modified from [MMD-Test-Suite/Critic.text at
     master ·
     fletcher/MMD-Test-Suite](https://github.com/fletcher/MMD-Test-Suite/blob/master/CriticMarkup/Critic.text)

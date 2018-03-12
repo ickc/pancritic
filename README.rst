@@ -51,7 +51,7 @@ A typical use of pancritic will be like
 
     pancritic -s -o index.html index.md
 
-See examples in `HTML <example.html>`__ and `PDF <example.pdf>`__.
+See examples in `HTML <tests.html>`__ and `PDF <tests.pdf>`__.
 
 pancritic specific options
 --------------------------
@@ -174,8 +174,8 @@ Credits
 
 -  Heavily modified from `CriticMarkup Toolkit’s
    criticParser_CLI.py <http://criticmarkup.com/services.php>`__
--  `test.md <test.md>`__ is modified from `MMD-Test-Suite/Critic.text at
-   master ·
+-  `tests.md <tests.md>`__ is modified from `MMD-Test-Suite/Critic.text
+   at master ·
    fletcher/MMD-Test-Suite <https://github.com/fletcher/MMD-Test-Suite/blob/master/CriticMarkup/Critic.text>`__
 
 .. |Build Status| image:: https://travis-ci.org/ickc/pancritic.svg?branch=master
