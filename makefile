@@ -40,13 +40,20 @@ testAll = tests/test-1.html tests/test-2.tex tests/test-3.tex tests/test-4.html 
 docs := $(wildcard docs/*.md)
 # docsHtml := $(patsubst %.md,%.html,$(docs))
 docsPdf := $(patsubst %.md,%.pdf,$(docs))
-docsAll := $(docsPdf) docs/index.html README.md README.rst README.html # $(docsHtml)
+docsAll := $(docsPdf) docs/index.html README.md README.rst README.html docs/example.html docs/example.pdf
 
 # Main Targets ########################################################################################################################################################################################
 
 all: $(testAll) $(docsAll)
 docs: $(docsAll)
 readme: docs
+
+docs/example.html: tests-ref/test.md
+	pancritic $< -o $@ -s --engine panflute
+docs/example.pdf: tests-ref/test.md
+		pancritic $< -o docs/example.tex -s --engine panflute -m m
+		latexmk -pdf docs/example.tex
+		mv example.pdf $@
 
 tests/test-5.md: tests-ref/test.md tests
 	coverage run -p --branch -m pancritic $< -o $@ -m a
