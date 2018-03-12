@@ -106,11 +106,10 @@ CriticMarkup parsing behavior (mainly tex vs. html). And the output
 extension controls the final output’s format (e.g. markdown, html, etc.)
 
 An interesting use of this is to use pancritic as a pandoc preprocessor
-instead, like
-this
+instead, like this
 
 ``` bash
-coverage run -p --branch -m pancritic input.md -t markdown -m m | pandoc -s -o output.html
+pancritic input.md -t markdown -m m | pandoc -s -o output.html
 ```
 
 This will be useful if more advanced pandoc args are needed.

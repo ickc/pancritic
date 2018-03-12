@@ -155,7 +155,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 id="advanced-usage-pancritic-as-a-pandoc-preprocessor"><span class="header-section-number">3.3</span> Advanced Usage: pancritic as a pandoc preprocessor</h2>
 <p>A somewhat surprising behavior is when the to-format and output extension is different. In pancritic, the to-format indicates the CriticMarkup parsing behavior (mainly tex vs. html). And the output extension controls the final output’s format (e.g. markdown, html, etc.)</p>
 <p>An interesting use of this is to use pancritic as a pandoc preprocessor instead, like this</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="ex">coverage</span> run -p --branch -m pancritic input.md -t markdown -m m <span class="kw">|</span> <span class="ex">pandoc</span> -s -o output.html</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="ex">pancritic</span> input.md -t markdown -m m <span class="kw">|</span> <span class="ex">pandoc</span> -s -o output.html</a></code></pre></div>
 <p>This will be useful if more advanced pandoc args are needed.</p>
 <h1 id="caveats"><span class="header-section-number">4</span> Caveats</h1>
 <ul>

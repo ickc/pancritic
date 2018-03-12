@@ -116,7 +116,7 @@ instead, like this
 
 .. code:: bash
 
-    coverage run -p --branch -m pancritic input.md -t markdown -m m | pandoc -s -o output.html
+    pancritic input.md -t markdown -m m | pandoc -s -o output.html
 
 This will be useful if more advanced pandoc args are needed.
 
