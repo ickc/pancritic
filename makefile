@@ -36,11 +36,7 @@ pandocArgePub := $(pandocArgHTML) -t $(ePubVersion) --epub-chapter-level=2
 pandocArgReadmeGitHub := $(pandocArgFragment) --toc-depth=2 -s -t gfm --reference-location=block
 pandocArgReadmePypi := $(pandocArgFragment) -s -t rst --reference-location=block -f markdown+autolink_bare_uris-fancy_lists-implicit_header_references
 
-test := $(wildcard tests/*.md)
-testNative := $(patsubst %.md,%.native,$(test))
-testPdf := $(patsubst %.md,%.pdf,$(test))
-testAll := $(testNative) $(testPdf)
-
+testAll = tests/test-1.html tests/test-2.tex tests/test-3.tex tests/test-4.html tests/test-5.md tests/test-6.html
 docs := $(wildcard docs/*.md)
 # docsHtml := $(patsubst %.md,%.html,$(docs))
 docsPdf := $(patsubst %.md,%.pdf,$(docs))
@@ -51,9 +47,25 @@ docsAll := $(docsPdf) docs/index.html README.md README.rst README.html # $(docsH
 all: $(testAll) $(docsAll)
 docs: $(docsAll)
 readme: docs
-test: pytest pep8
-	coverage html
-testFull: pytest pep8 pylint
+
+tests/test-1.html: tests-ref/test.md tests
+	coverage run -p --branch -m pancritic $< -o $@ -m m
+tests/test-2.tex: tests-ref/test.md tests
+	coverage run -p --branch -m pancritic $< -o $@ --engine pypandoc
+tests/test-3.tex: tests-ref/test.md tests
+	coverage run -p --branch -m pancritic $< -o $@ --engine panflute
+tests/test-4.html: tests-ref/test.md tests
+	coverage run -p --branch -m pancritic $< -o $@ -s --critic-template <(echo '<div>nothing</div>')
+tests/test-5.md: tests-ref/test.md tests
+	coverage run -p --branch -m pancritic $< -o $@ -m a
+tests/test-6.html: tests-ref/test.md tests
+	coverage run -p --branch -m pancritic $< -o $@ -m r --engine markdown2
+
+tests:
+	mkdir -p $@
+
+test: $(testAll) # pep8
+	coverage combine -a .coverage*
 	coverage html
 
 clean:
@@ -67,8 +79,6 @@ Clean:
 
 # Making dependancies #################################################################################################################################################################################
 
-%.native: %.md $(pancritic)
-	pandoc -t native -o $@ $<
 %.pdf: %.md $(pancritic)
 	pandoc $(pandocArgStandalone) -o $@ $<
 %.html: %.md $(pancritic)
@@ -99,10 +109,6 @@ pypi:
 pypiManual:
 	$(python) setup.py sdist upload || twine upload dist/*
 
-init:
-	$(pip) install -r requirements.txt
-	$(pip) install -r tests/requirements.txt
-
 dev:
 	$(pip) install -e .[test]
 
@@ -112,9 +118,9 @@ pytestLite:
 	$(python) -m pytest -vv --cov=pancritic tests
 # check python styles
 pep8:
-	pep8 . --ignore=E402,E501,E731
+	pycodestyle . --ignore=E402,E501,E731
 pep8Strict:
-	pep8 .
+	pycodestyle .
 pyflakes:
 	pyflakes .
 flake8:
@@ -127,24 +133,3 @@ autopep8:
 	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose
 autopep8Aggressive:
 	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose --aggressive --aggressive
-
-# pasteurize
-past:
-	pasteurize -wnj 4 .
-
-# cleanup markdown
-cleanup: style normalize
-## Normalize white spaces:
-### 1. Add 2 trailing newlines
-### 2. transform non-breaking space into (explicit) space
-### 3. temporarily transform markdown non-breaking space `\ ` into unicode
-### 4. delete all CONSECUTIVE blank lines from file except the first; deletes all blank lines from top and end of file; allows 0 blanks at top, 0,1,2 at EOF
-### 5. delete trailing whitespace (spaces, tabs) from end of each line
-### 6. revert (3)
-normalize:
-	find . -maxdepth 2 -mindepth 2 -iname "*.md" | xargs -i -n1 -P8 bash -c 'printf "\n\n" >> "$$0" && sed -i -e "s/ / /g" -e '"'"'s/\\ / /g'"'"' -e '"'"'/./,/^$$/!d'"'"' -e '"'"'s/[ \t]*$$//'"'"' -e '"'"'s/ /\\ /g'"'"' $$0' {}
-## pandoc cleanup:
-### 1. pandoc from markdown to markdown
-### 2. transform unicode non-breaking space back to `\ `
-style:
-	find . -maxdepth 2 -mindepth 2 -iname "*.md" | xargs -i -n1 -P8 bash -c 'pandoc $(pandocArgMD) -o $$0 $$0 && sed -i -e '"'"'s/ /\\ /g'"'"' $$0' {}
