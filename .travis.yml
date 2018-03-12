@@ -56,16 +56,13 @@ matrix:
 install:
   # latest pip dropped support for py3.2, which is the version of python in pypy3
   - if [[ "$TRAVIS_PYTHON_VERSION" != "pypy3" ]]; then pip install -U pip; fi
-  - pip install requests
+  - pip install -e .[test]
   # pandoc
   - downloadUrl=$(python -c 'import requests, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + (v if v == "latest" else ("tags/" + v)); print(next(i["browser_download_url"] for i in requests.get(url).json()["assets"] if i["name"][-3:] == "deb"))' $pandocVersion) &&
     wget $downloadUrl &&
     sudo dpkg -i ${downloadUrl##*/}
-  - pip install -e .[test]
 # command to run tests
 script:
-  # check if pandoc is in the PATH
-  - $(which pandoc) --version
   - make -j4 test
 after_success:
   - if [[ "$pandocVersion" == "latest" && "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then coveralls; else printf "skip coveralls"; fi
