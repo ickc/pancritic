@@ -130,7 +130,7 @@ def markdown_filter(body, engine):
 
 
 def pandoc_filter(body, input_format, output_format, standalone, engine):
-    extra_args = ['-s'] if standalone else None
+    extra_args = ['-s'] if standalone else []
 
     def panflute_filter(body, input_format, output_format, extra_args):
         from panflute import convert_text
