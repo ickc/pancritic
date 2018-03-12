@@ -38,14 +38,14 @@ def main(args):
 
     # only convert markdown to html or tex if the output extension is really that format
     output_format = IO_to_format(args.output)
-    if output_format != args.from_format:
-        if args.from_format == 'markdown' and output_format == 'html' and args.engine in ('markdown', 'markdown2'):
-            body = markdown_filter(body, args.engine)
-        else:
-            body = pandoc_filter(body, args.from_format, output_format, args.standalone, args.engine)
-
-    if args.to != 'latex':
-        # for any other format, use HTML (many formats support inline HTML)
+    if args.from_format == 'markdown' and output_format == 'html' and args.engine in ('markdown', 'markdown2'):
+        body = markdown_filter(body, args.engine)
+        body = html_filter(body, args.critic_template, args.critic_mode[0], args.standalone)
+    elif output_format != args.from_format:
+        # defer standalone to pandoc
+        body = html_filter(body, args.critic_template, args.critic_mode[0], False)
+        body = pandoc_filter(body, args.from_format, output_format, args.standalone, args.engine)
+    else:
         body = html_filter(body, args.critic_template, args.critic_mode[0], args.standalone)
 
     args.output.write(body)
