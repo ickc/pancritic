@@ -129,7 +129,7 @@ NAV = '''<div id="criticnav"><ul>
 </ul></div>
 '''
 
-JS='''<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
+JS = '''<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
 
 <script type="text/javascript">
 
