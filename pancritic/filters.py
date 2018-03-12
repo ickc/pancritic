@@ -110,34 +110,12 @@ def criticmarkup_html_diff_filter(body):
 
 
 def markdown_filter(body, engine):
-    '''refactor to use pandoc_filter?
-    '''
-    def fallback():
-        print('Cannot use {}, use markdown instead.'.format(engine), file=sys.stderr)
-
     if engine == 'markdown2':
         try:
             from markdown2 import markdown
             return markdown(body, extras=['footnotes', 'fenced-code-blocks', 'cuddled-lists', 'code-friendly'])
         except ImportError:
-            fallback()
-
-    elif engine == 'panflute':
-        try:
-            from panflute import convert_text
-            return convert_text(body, output_format='html')
-        except:
-            fallback()
-
-    elif engine == 'pypandoc':
-        try:
-            from pypandoc import convert_text
-            return convert_text(body, 'html', format='md')
-        except:
-            fallback()
-
-    elif engine != 'markdown':
-        fallback()
+            print('Cannot use markdown2, use markdown instead.', file=sys.stderr)
 
     from markdown import markdown
     return markdown(body, extensions=['extra', 'codehilite', 'meta'])

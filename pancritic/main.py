@@ -39,7 +39,7 @@ def main(args):
     # only convert markdown to html or tex if the output extension is really that format
     output_format = IO_to_format(args.output)
     if output_format != args.from_format:
-        if args.from_format == 'markdown' and output_format == 'html':
+        if args.from_format == 'markdown' and output_format == 'html' and args.engine in ('markdown', 'markdown2'):
             body = markdown_filter(body, args.engine)
         else:
             body = pandoc_filter(body, args.from_format, output_format, args.standalone, args.engine)
