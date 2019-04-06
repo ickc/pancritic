@@ -117,11 +117,11 @@ Markdown within the CriticMarkup will not be rendered in LaTeX output. If you wa
 
 | CriticMarkup	| LaTeX	|  
 | ------------------------------------------	| ----------------------------------------------	|  
-| `{--[text]--}`	| `\st{[text]}`	|  
-| `{++[text]++}`	| `\underline{[text]}`	|  
-| `{~~[text1]~>[text2]~~}`	| `\st{[text1]}\underline{[text2]}`	|  
-| `{==[text]==}`	| `\hl{[text]}`	|  
-| `{>>[text]<<}`	| `\marginpar{[text]}`	|  
+| `{--[text]--}`	| `\deleted{[text]}`	|  
+| `{++[text]++}`	| `\added{[text]}`	|  
+| `{~~[text1]~>[text2]~~}`	| `\replaced{[text2]}{[text1]}`	|  
+| `{==[text]==}`	| `\highlight{[text]}`	|  
+| `{>>[text]<<}`	| `\comment{[text]}`	|  
 
 : Translation from CriticMarkup to LaTeX.
 
