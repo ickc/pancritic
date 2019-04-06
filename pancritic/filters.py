@@ -31,12 +31,12 @@ def criticmarkup_reject_filter(body):
 
 
 def criticmarkup_tex_diff_filter(body):
-    body = ADD_EDIT.sub(r'\\underline{\1}', body)
-    body = DEL_EDIT.sub(r'\\st{\1}', body)
-    body = SUB_EDIT.sub(r'\\st{\1}\\underline{\2}', body)
+    body = ADD_EDIT.sub(r'\\added{\1}', body)
+    body = DEL_EDIT.sub(r'\\deleted{\1}', body)
+    body = SUB_EDIT.sub(r'\\replaced{\2}{\1}', body)
 
-    body = MARK_EDIT.sub(r'\\hl{\1}', body)
-    return COMM_EDIT.sub(r'\\marginpar{\1}', body)
+    body = MARK_EDIT.sub(r'\\highlight{\1}', body)
+    return COMM_EDIT.sub(r'\\comment{\1}', body)
 
 
 def criticmarkup_html_diff_filter(body):

@@ -1,7 +1,7 @@
 ---
 title: Using CriticMarkup with pandoc
 author: Kolen Cheung
-fontfamily: lmodern,color,soul
+fontfamily: lmodern,changes
 ...
 
 Using CriticMarkup with pandoc. It serves both as a wrapper and a pre-processor.
@@ -93,13 +93,23 @@ This will be useful if more advanced pandoc args are needed.
 
 ## LaTeX Ouptut
 
-Note that the LaTeX output requires the LaTeX packages `color` and `soul`.
+Note that the LaTeX output requires the LaTeX packages `changes>=3`.[^changes]
 
-One can achieve this by either using a custom template or `--include-in-header` option. Or you can use the trick of putting the following in your YAML front matter, like this file:
+[^changes]: The version of the package in TeXLive 2018 is still v2. [TeXLive 2019 should be available on 2019-4-30](https://www.tug.org/texlive/), meanwhile you need to
 
-```yaml
+	```bash
+	# sudo is needed in most cases, depending on where you put it
+	sudo tlmgr update --self
+	sudo tlmgr update changes
+	# check it is >=3
+	tlmgr info changes
+	```
+
+One can tell pandoc to use this package by either using a custom template or `--include-in-header` option. Or you can use the trick of putting the following in your YAML front matter, like this file:
+
+``` yaml
 ---
-fontfamily: lmodern,color,soul
+fontfamily: lmodern,changes
 ...
 ```
 

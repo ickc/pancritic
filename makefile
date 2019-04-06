@@ -38,10 +38,10 @@ pandocArgReadmeGitHub := $(pandocArgFragment) --toc-depth=2 -s -t gfm --referenc
 pandocArgReadmePypi := $(pandocArgFragment) -s -t rst --reference-location=block -f markdown+autolink_bare_uris-fancy_lists-implicit_header_references
 
 testAll = tests/test-1.html tests/test-2.tex tests/test-3.tex tests/test-4.html tests/test-5.md tests/test-6.html tests/test-7.html tests/test-8.html tests/test-9.pdf
-docs := $(wildcard docs/*.md)
+# docs := $(wildcard docs/*.md)
 # docsHtml := $(patsubst %.md,%.html,$(docs))
-docsPdf := $(patsubst %.md,%.pdf,$(docs))
-docsAll := $(docsPdf) docs/index.html README.md README.rst README.html docs/tests.html docs/tests.pdf
+# docsPdf := $(patsubst %.md,%.pdf,$(docs))
+docsAll := docs/index.html README.md README.rst README.html docs/tests.html docs/tests.pdf
 
 # Main Targets ########################################################################################################################################################################################
 
