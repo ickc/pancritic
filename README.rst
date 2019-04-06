@@ -5,7 +5,7 @@ Using CriticMarkup with pandoc
 ==============================
 
 :Author: Kolen Cheung
-:Date:   March 11, 2018
+:Date:   April 5, 2019
 
 .. contents::
    :depth: 3
@@ -33,7 +33,7 @@ Install using
 
 .. code:: bash
 
-    pip install pancritic
+   pip install pancritic
 
 Usage: pancritic as a markdown wrapper (including but not limited to pandoc)
 ============================================================================
@@ -43,13 +43,13 @@ home. See help from
 
 .. code:: bash
 
-    pancritic -h
+   pancritic -h
 
 A typical use of pancritic will be like
 
 .. code:: bash
 
-    pancritic -s -o index.html index.md
+   pancritic -s -o index.html index.md
 
 See examples in `HTML <tests.html>`__ and `PDF <tests.pdf>`__.
 
@@ -57,22 +57,22 @@ pancritic specific options
 --------------------------
 
 ``--engine``
-    The default engine is ``markdown``. Valid options are ``markdown``,
-    ``markdown2``, ``panflute``, ``pypandoc``. You need to install the
-    respective package in order to use them. ``markdown`` and
-    ``markdown2`` are pure Python, hence useful for other CPU
-    architechture. ``panflute`` and ``pypandoc`` both uses pandoc as
-    backend.
+   The default engine is ``markdown``. Valid options are ``markdown``,
+   ``markdown2``, ``panflute``, ``pypandoc``. You need to install the
+   respective package in order to use them. ``markdown`` and
+   ``markdown2`` are pure Python, hence useful for other CPU
+   architechture. ``panflute`` and ``pypandoc`` both uses pandoc as
+   backend.
 
 ``-m``\ \|\ ``--critic-mode``
-    a/accept, r/reject: accept/reject changes.
+   a/accept, r/reject: accept/reject changes.
 
-    d/diff: generates a diff. In HTML output, JS is used for toggling
-    between diff, accept, reject.
-    m/markup: treat the CriticMarkup as Markup. i.e. in HTML output
-    there isn’t any toggles but the diff view only. In LaTeX output,
-    diff and markup modes are identical except for an additional nav.
-    ``-m m`` should be used with LaTeX output.
+   d/diff: generates a diff. In HTML output, JS is used for toggling
+   between diff, accept, reject.
+   m/markup: treat the CriticMarkup as Markup. i.e. in HTML output there
+   isn’t any toggles but the diff view only. In LaTeX output, diff and
+   markup modes are identical except for an additional nav. ``-m m``
+   should be used with LaTeX output.
 
 Previous Users
 --------------
@@ -99,9 +99,9 @@ Examples,
 
 .. code:: bash
 
-    criticParser_CLI.py input.md -m2 -o output.html --css css.html
-    # is equivalent to
-    pancritic -o output.html input.md --critic-template css.html --engine markdown2
+   criticParser_CLI.py input.md -m2 -o output.html --css css.html
+   # is equivalent to
+   pancritic -o output.html input.md --critic-template css.html --engine markdown2
 
 Advanced Usage: pancritic as a pandoc preprocessor
 --------------------------------------------------
@@ -116,7 +116,7 @@ instead, like this
 
 .. code:: bash
 
-    pancritic input.md -t markdown -m m | pandoc -s -o output.html
+   pancritic input.md -t markdown -m m | pandoc -s -o output.html
 
 This will be useful if more advanced pandoc args are needed.
 
@@ -135,18 +135,18 @@ Caveats
 LaTeX Ouptut
 ------------
 
-Note that the LaTeX output requires the LaTeX packages ``color`` and
-``soul``.
+Note that the LaTeX output requires the LaTeX packages
+``changes>=3``. [1]_
 
-One can achieve this by either using a custom template or
-``--include-in-header`` option. Or you can use the trick of putting the
-following in your YAML front matter, like this file:
+One can tell pandoc to use this package by either using a custom
+template or ``--include-in-header`` option. Or you can use the trick of
+putting the following in your YAML front matter, like this file:
 
 .. code:: yaml
 
-    ---
-    fontfamily: lmodern,color,soul
-    ...
+   ---
+   fontfamily: lmodern,changes
+   ...
 
 Markdown within the CriticMarkup will not be rendered in LaTeX output.
 If you want to change this behavior, you can take a look at: `LaTeX
@@ -155,19 +155,15 @@ Parser <https://gist.github.com/mpickering/f1718fcdc4c56273ed52>`__.
 
 .. table:: Translation from CriticMarkup to LaTeX.
 
-   +----------------------------+-------------------------------------+
-   | CriticMarkup               | LaTeX                               |
-   +============================+=====================================+
-   | ``{--[text]--}``           | ``\st{[text]}``                     |
-   +----------------------------+-------------------------------------+
-   | ``{++[text]++}``           | ``\underline{[text]}``              |
-   +----------------------------+-------------------------------------+
-   | ``{~~[text1]~>[text2]~~}`` | ``\st{[text1]}\underline{[text2]}`` |
-   +----------------------------+-------------------------------------+
-   | ``{==[text]==}``           | ``\hl{[text]}``                     |
-   +----------------------------+-------------------------------------+
-   | ``{>>[text]<<}``           | ``\marginpar{[text]}``              |
-   +----------------------------+-------------------------------------+
+   ========================== ===============================
+   CriticMarkup               LaTeX
+   ========================== ===============================
+   ``{--[text]--}``           ``\deleted{[text]}``
+   ``{++[text]++}``           ``\added{[text]}``
+   ``{~~[text1]~>[text2]~~}`` ``\replaced{[text2]}{[text1]}``
+   ``{==[text]==}``           ``\highlight{[text]}``
+   ``{>>[text]<<}``           ``\comment{[text]}``
+   ========================== ===============================
 
 Credits
 =======
@@ -177,6 +173,19 @@ Credits
 -  `tests.md <tests.md>`__ is modified from `MMD-Test-Suite/Critic.text
    at master ·
    fletcher/MMD-Test-Suite <https://github.com/fletcher/MMD-Test-Suite/blob/master/CriticMarkup/Critic.text>`__
+
+.. [1]
+   The version of the package in TeXLive 2018 is still v2. `TeXLive 2019
+   should be available on 2019-4-30 <https://www.tug.org/texlive/>`__,
+   meanwhile you need to
+
+   .. code:: bash
+
+      # sudo is needed in most cases, depending on where you put it
+      sudo tlmgr update --self
+      sudo tlmgr update changes
+      # check it is >=3
+      tlmgr info changes
 
 .. |Build Status| image:: https://travis-ci.org/ickc/pancritic.svg?branch=master
    :target: https://travis-ci.org/ickc/pancritic
