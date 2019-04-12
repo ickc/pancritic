@@ -18,11 +18,11 @@ def normalize_format(ext):
         return ext
 
 
-def main(args, body, output_format, is_binary):
+def main(args, body, is_binary):
     # parse CritiMarkup
     # diff/markup mode
     if args.critic_mode[0] in ('d', 'm'):
-        if args.to in ('latex', 'pdf'):
+        if args.to_format in ('latex', 'pdf'):
             body = criticmarkup_tex_diff_filter(body)
         # for any other format, use HTML (many formats support inline HTML)
         else:
@@ -37,21 +37,21 @@ def main(args, body, output_format, is_binary):
         print('Unknown critic mode {}.'.format(args.critic_mode), file=sys.stderr)
 
     # convert between to and from format
-    # only convert markdown to html or tex if the output extension is really that format
-    if args.from_format == 'markdown' and output_format == 'html' and args.engine in ('markdown', 'markdown2'):
+    # only convert markdown to html or tex if the output format is really that format
+    if args.from_format == 'markdown' and args.to_format == 'html' and args.engine in ('markdown', 'markdown2'):
         body = markdown_filter(body, args.engine)
         body = html_filter(body, args.critic_template, args.critic_mode[0], args.standalone)
-    elif output_format != args.from_format:
+    elif args.to_format != args.from_format:
         # as long as the final format will be latex, don't add html_filter
-        if args.to not in ('latex', 'pdf'):
+        if args.to_format not in ('latex', 'pdf'):
             # defer standalone to pandoc
             body = html_filter(body, args.critic_template, args.critic_mode[0], False)
         if is_binary:
             # only pypandoc handles binary output
-            body = pandoc_filter(body, args.from_format, output_format, args.standalone, 'pypandoc', outputfile=args.output)
+            body = pandoc_filter(body, args.from_format, args.to_format, args.standalone, 'pypandoc', outputfile=args.output)
         else:
-            body = pandoc_filter(body, args.from_format, output_format, args.standalone, args.engine)
-    elif args.to != 'latex':
+            body = pandoc_filter(body, args.from_format, args.to_format, args.standalone, args.engine)
+    elif args.to_format != 'latex':
         body = html_filter(body, args.critic_template, args.critic_mode[0], args.standalone)
 
     # write (if is binary, already written above)
@@ -67,7 +67,7 @@ def get_args():
     parser.add_argument('-o', '--output',
                         help='Output file. Default: stdout.')
 
-    parser.add_argument('-t', '--to',
+    parser.add_argument('-t', '--to', dest='to_format',
                         help='Output format. Default: inferred from --output.')
     parser.add_argument('-f', '--from', dest='from_format',
                         help='Input format. Default: inferred from --input.')
@@ -110,19 +110,16 @@ def get_args():
             args.output = args.input.name
 
     args.input.close()
-    
 
-    # output-format (remember args.output is a string)
-    try:
-        output_format = normalize_format(os.path.splitext(args.output)[1][1:])
-    except TypeError:
-        print("No output file extension nor to-format specified. Default to HTML.", file=sys.stderr)
-        output_format = 'html'
+    # to-format (remember args.output is a string)
+    if not args.to_format:
+        try:
+            args.to_format = normalize_format(os.path.splitext(args.output)[1][1:])
+        except TypeError:
+            print("No output file extension nor to-format specified. Default to HTML.", file=sys.stderr)
+            args.to_format = 'html'
 
-    if args.to is None:
-        args.to = output_format
-
-    is_binary = output_format in ("odt", "docx", "epub", "epub3", "pdf")
+    is_binary = args.to_format in ("odt", "docx", "epub", "epub3", "pdf")
 
     if not is_binary:
         args.output = sys.stdout if args.output is None else open(args.output, 'w')
@@ -130,7 +127,7 @@ def get_args():
         print('Cannot output binary format to stdout', file=sys.stderr)
         exit(1)
 
-    return args, body, output_format, is_binary
+    return args, body, is_binary
 
 
 def cli():
