@@ -97,7 +97,7 @@ def get_args():
         if args.input.name != '<stdin>':
             args.from_format = normalize_format(os.path.splitext(args.input.name)[1][1:])
         else:
-            print("No input file extension nor from-format specified. Default to markdown.")
+            print("No input file extension nor from-format specified. Default to markdown.", file=sys.stderr)
             args.from_format = 'markdown'
 
     body = args.input.read()
@@ -116,7 +116,7 @@ def get_args():
     try:
         output_format = normalize_format(os.path.splitext(args.output)[1][1:])
     except TypeError:
-        print("No output file extension nor to-format specified. Default to HTML.")
+        print("No output file extension nor to-format specified. Default to HTML.", file=sys.stderr)
         output_format = 'html'
 
     if args.to is None:
