@@ -68,7 +68,7 @@ before_install:
 # install dependencies
 install:
   # pandoc
-    sudo dpkg -i "${downloadUrl##*/}"
+  - sudo dpkg -i "${downloadUrl##*/}"
   - pip install -U pip
   - pip install -e .[test]
 # command to run tests
