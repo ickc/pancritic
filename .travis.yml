@@ -4,8 +4,6 @@ cache: pip
 # build matrix: different python and pandoc versions
 python:
   - "2.7"
-  # - "3.3"
-  - "3.4"
   - "3.5"
   - "3.6"
   - "3.7"
@@ -47,7 +45,6 @@ matrix:
     - python: "3.9-dev"
     - python: "nightly"
     - python: "pypy"
-    - python: "pypy3"
     # - env: pandocVersion=1.13.2
     # - env: pandocVersion=1.14
     # - env: pandocVersion=1.14.0.1
