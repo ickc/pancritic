@@ -42,7 +42,7 @@ setup(
     author_email='christian.kolen@gmail.com',
 
     # Choose your license
-    license='GPLv3',
+    license='BSD-3-Clause',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
