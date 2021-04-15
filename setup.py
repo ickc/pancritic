@@ -6,7 +6,6 @@ https://github.com/ickc/pancritic
 
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
-import setuptools
 # To use a consistent encoding
 from codecs import open
 from os import path
