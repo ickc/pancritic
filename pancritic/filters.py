@@ -147,16 +147,16 @@ def markdown_filter(body, engine):
     return body
 
 
-def pandoc_filter(body, input_format, output_format, standalone, engine, outputfile=None):
+def pandoc_filter(body, from_format, to_format, standalone, engine, outputfile=None):
     extra_args = ['-s'] if standalone else []
 
-    def panflute_filter(body, input_format, output_format, extra_args, outputfile):
+    def panflute_filter(body, from_format, to_format, extra_args, outputfile):
         from panflute import convert_text
-        return convert_text(body, input_format=input_format, output_format=output_format, extra_args=extra_args)
+        return convert_text(body, input_format=from_format, output_format=to_format, extra_args=extra_args)
 
-    def pypandoc_filter(body, input_format, output_format, extra_args, outputfile):
+    def pypandoc_filter(body, from_format, to_format, extra_args, outputfile):
         from pypandoc import convert_text
-        return convert_text(body, output_format, input_format, extra_args=extra_args, outputfile=outputfile)
+        return convert_text(body, to_format, from_format, extra_args=extra_args, outputfile=outputfile)
 
     engines = ('panflute', 'pypandoc') if engine == 'panflute' else ('pypandoc', 'panflute')
     engine_function = {
@@ -169,7 +169,7 @@ def pandoc_filter(body, input_format, output_format, standalone, engine, outputf
             # i != 0 means failing last time
             if i != 0:
                 print('Use {} instead.'.format(engine), file=sys.stderr)
-            return engine_function[engine](body, input_format, output_format, extra_args, outputfile)
+            return engine_function[engine](body, from_format, to_format, extra_args, outputfile)
         except:
             print('Cannot use {}.'.format(engine), file=sys.stderr)
 
